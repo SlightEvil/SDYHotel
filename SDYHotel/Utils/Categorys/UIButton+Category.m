@@ -15,7 +15,7 @@
 {
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
     [btn setTitle:title forState:UIControlStateNormal];
-    [btn setTitleColor:textColor forState:UIControlStateNormal];
+    [btn setTitleColor:textColor ? textColor : [UIColor blackColor] forState:UIControlStateNormal];
     btn.titleLabel.font = [UIFont systemFontOfSize:font ? font : 18];
     [btn setBackgroundColor:bgColor];
     return btn;

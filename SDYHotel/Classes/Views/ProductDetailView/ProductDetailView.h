@@ -9,16 +9,19 @@
 #import <UIKit/UIKit.h>
 @class ProductDetailModel;
 
+@protocol ProductDetailViewDelegate  <NSObject>
+
+- (void)productDetailViewCompleteBtnClickHidenWhiteContentView;
+
+
+@end
+
 
 @interface ProductDetailView : UIButton
 
 @property (nonatomic) ProductDetailModel *detailModel;
 
-
-
-- (void)showView;
-
-- (void)hideView;
+@property (nonatomic, weak) id <ProductDetailViewDelegate>delegate;
 
 
 @end

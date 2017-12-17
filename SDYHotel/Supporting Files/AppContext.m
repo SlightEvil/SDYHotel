@@ -12,19 +12,12 @@
 #import "Masonry.h"
 #import "SDYBaseVC.h"
 
-#import "ProductDetailView.h"
-
-
-
-//#import "SDYBaseVC.h"
-
 
 @interface AppContext ()
 
 @property (nonatomic) UIWindow *topWindow;
 
 
-@property (nonatomic) ProductDetailView *productDetailView;
 
 
 
@@ -149,12 +142,6 @@ single_implementation(AppContext)
     return _viewModel;
 }
 
-- (ProductDetailView *)productDetailView
-{
-    if (!_productDetailView) {
-        _productDetailView = [[ProductDetailView alloc] init];
-    }
-    return _productDetailView;
-}
+
 
 @end

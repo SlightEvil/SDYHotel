@@ -12,12 +12,6 @@
 
 FOUNDATION_EXPORT NSString *const ProductDetailProductKey;
 
-//@class ProductDetailProductModel;
-//@class ProductDetailSkusModel;
-//@class ProductDetailShopModel;
-//@class ProductDetailAttributesModel;
-
-
 @interface ProductDetailModel : NSObject
 
 
@@ -39,6 +33,7 @@ FOUNDATION_EXPORT NSString *const ProductDetailProductKey;
 
 //规格分组名称
 @property (nonatomic, copy) NSString *group_name;
+
 //规格名称
 @property (nonatomic, copy) NSString *attribute_name;
 //单品id
@@ -49,6 +44,9 @@ FOUNDATION_EXPORT NSString *const ProductDetailProductKey;
 @property (nonatomic, copy) NSString *sales;
 //销量基数
 @property (nonatomic, copy) NSString *show_sales;
+//级别
+@property (nonatomic, copy) NSMutableArray *attributes;
+
 
 
 @end

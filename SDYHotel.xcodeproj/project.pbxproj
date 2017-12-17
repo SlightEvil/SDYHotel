@@ -41,6 +41,8 @@
 		845858B11FDCC9DD00ED0B98 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 845858B01FDCC9DD00ED0B98 /* Assets.xcassets */; };
 		845858B41FDCC9DD00ED0B98 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 845858B21FDCC9DD00ED0B98 /* LaunchScreen.storyboard */; };
 		845858B71FDCC9DD00ED0B98 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 845858B61FDCC9DD00ED0B98 /* main.m */; };
+		848239A21FE619EE00AF19B7 /* ProdectLibraryOrderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 848239A01FE619EE00AF19B7 /* ProdectLibraryOrderCell.m */; };
+		848239A71FE64D1E00AF19B7 /* Function.m in Sources */ = {isa = PBXBuildFile; fileRef = 848239A61FE64D1E00AF19B7 /* Function.m */; };
 		84DB2AC91FDD234C00D1F375 /* UIColor+Category.m in Sources */ = {isa = PBXBuildFile; fileRef = 84DB2AC81FDD234C00D1F375 /* UIColor+Category.m */; };
 		84DB2ACC1FDD28DB00D1F375 /* SDYTitleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 84DB2ACB1FDD28DB00D1F375 /* SDYTitleView.m */; };
 		84DB2ACF1FDD2A3A00D1F375 /* UILabel+Category.m in Sources */ = {isa = PBXBuildFile; fileRef = 84DB2ACE1FDD2A3A00D1F375 /* UILabel+Category.m */; };
@@ -116,6 +118,10 @@
 		845858B31FDCC9DD00ED0B98 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		845858B51FDCC9DD00ED0B98 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		845858B61FDCC9DD00ED0B98 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		8482399F1FE619EE00AF19B7 /* ProdectLibraryOrderCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProdectLibraryOrderCell.h; sourceTree = "<group>"; };
+		848239A01FE619EE00AF19B7 /* ProdectLibraryOrderCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ProdectLibraryOrderCell.m; sourceTree = "<group>"; };
+		848239A51FE64D1E00AF19B7 /* Function.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Function.h; sourceTree = "<group>"; };
+		848239A61FE64D1E00AF19B7 /* Function.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Function.m; sourceTree = "<group>"; };
 		84DB2AC71FDD234C00D1F375 /* UIColor+Category.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIColor+Category.h"; sourceTree = "<group>"; };
 		84DB2AC81FDD234C00D1F375 /* UIColor+Category.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Category.m"; sourceTree = "<group>"; };
 		84DB2ACA1FDD28DB00D1F375 /* SDYTitleView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDYTitleView.h; sourceTree = "<group>"; };
@@ -409,6 +415,7 @@
 			children = (
 				84DB2AD01FDD365F00D1F375 /* Defines */,
 				840E9F651FDD086C0027E1E2 /* Categorys */,
+				848239A41FE64CF000AF19B7 /* Functoin */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -438,6 +445,7 @@
 			children = (
 				84DB2ACA1FDD28DB00D1F375 /* SDYTitleView.h */,
 				84DB2ACB1FDD28DB00D1F375 /* SDYTitleView.m */,
+				8482399E1FE6199600AF19B7 /* ProdectLibraryOrderCell */,
 				8412E8171FE377BF008335AA /* ProductDetailView */,
 				8412E8051FE264AF008335AA /* ProductCollectionCell */,
 				8412E8011FE21E75008335AA /* TableViewHeaderFootView */,
@@ -459,6 +467,24 @@
 				8412E7CB1FDF5657008335AA /* Login */,
 			);
 			path = Controllers;
+			sourceTree = "<group>";
+		};
+		8482399E1FE6199600AF19B7 /* ProdectLibraryOrderCell */ = {
+			isa = PBXGroup;
+			children = (
+				8482399F1FE619EE00AF19B7 /* ProdectLibraryOrderCell.h */,
+				848239A01FE619EE00AF19B7 /* ProdectLibraryOrderCell.m */,
+			);
+			path = ProdectLibraryOrderCell;
+			sourceTree = "<group>";
+		};
+		848239A41FE64CF000AF19B7 /* Functoin */ = {
+			isa = PBXGroup;
+			children = (
+				848239A51FE64D1E00AF19B7 /* Function.h */,
+				848239A61FE64D1E00AF19B7 /* Function.m */,
+			);
+			path = Functoin;
 			sourceTree = "<group>";
 		};
 		84DB2AC31FDD0AB200D1F375 /* ViewModel */ = {
@@ -629,6 +655,7 @@
 				8412E7E31FDFD500008335AA /* SDYTextField.m in Sources */,
 				84DB2ACC1FDD28DB00D1F375 /* SDYTitleView.m in Sources */,
 				8412E7C21FDE6777008335AA /* AppContext.m in Sources */,
+				848239A71FE64D1E00AF19B7 /* Function.m in Sources */,
 				8412E8101FE280FF008335AA /* ProductDetailModel.m in Sources */,
 				8412E7C71FDE698C008335AA /* TabbarViewConModel.m in Sources */,
 				840E9F551FDCE0690027E1E2 /* SDYCommodityLibraryVC.m in Sources */,
@@ -638,6 +665,7 @@
 				84DB2ACF1FDD2A3A00D1F375 /* UILabel+Category.m in Sources */,
 				845858A91FDCC9DD00ED0B98 /* AppDelegate.m in Sources */,
 				84DB2AC91FDD234C00D1F375 /* UIColor+Category.m in Sources */,
+				848239A21FE619EE00AF19B7 /* ProdectLibraryOrderCell.m in Sources */,
 				8412E7E91FE0D337008335AA /* UIViewController+Category.m in Sources */,
 				8412E7F91FE1F854008335AA /* ProductModle.m in Sources */,
 				8412E81A1FE377DB008335AA /* ProductDetailView.m in Sources */,
@@ -783,7 +811,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = SanDaoYi.SDYHotel;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Debug;
 		};
@@ -800,7 +828,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = SanDaoYi.SDYHotel;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Release;
 		};

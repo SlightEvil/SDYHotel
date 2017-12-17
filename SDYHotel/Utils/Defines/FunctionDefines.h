@@ -12,6 +12,11 @@
 
 #define tableViewTagCommodityLibraryProductCategory     15001
 #define tableViewTagCommodityLibraryProductClass        15002
+#define tableViewTagCommodityLibraryProductOrder        15003
+
+
+#define buttonTagCommodityLibraryProductDetailViewGrade     20000
+#define buttonTagCommodityLibraryProductDetailViewUnit      20010
 //#define tableViewTag
 //#define tableViewTag
 //#define tableViewTag

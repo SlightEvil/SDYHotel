@@ -17,13 +17,14 @@
 static NSString *const CategoryTableViewCellIdentifier = @"CommodityLibraryCatagoryTableViewCellIdentifier";
 static NSString *const ClassTableViewCellIdentifier = @"CommodityLibraryClassTableViewCellIdentifier";
 static NSString *const ProductCollectionCellIdentifier = @"CommodityLibraryProductCollectionCellIdentifier";
+static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTableViewCellIdentifier";
 
-@interface SDYCommodityLibraryVC ()<UITableViewDelegate,UITableViewDataSource,UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout>
+@interface SDYCommodityLibraryVC ()<UITableViewDelegate,UITableViewDataSource,UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout,ProductDetailViewDelegate>
 
 @property (nonatomic) UITableView *categoryTableView;
 @property (nonatomic) UITableView *classTableView;
 @property (nonatomic) UICollectionView *collectionView;
-@property (nonatomic) UITextView *orderMessageView;
+@property (nonatomic) UITableView *orderTableView;
 
 @property (nonatomic) ProductDetailView *detailView;
 @property (nonatomic) UIButton *blackView;
@@ -46,7 +47,7 @@ static NSString *const ProductCollectionCellIdentifier = @"CommodityLibraryProdu
     [self.view addSubview:self.categoryTableView];
     [self.view addSubview:self.classTableView];
     [self.view addSubview:self.collectionView];
-    [self.view addSubview:self.orderMessageView];
+    [self.view addSubview:self.orderTableView];
     
     [self layoutWithAuto];
     
@@ -87,6 +88,9 @@ static NSString *const ProductCollectionCellIdentifier = @"CommodityLibraryProdu
     if (tableView.tag == tableViewTagCommodityLibraryProductClass) {
         return @"分类描述";
     }
+    if (tableView.tag == tableViewTagCommodityLibraryProductOrder) {
+        return @"订单";
+    }
     return nil;
 }
 
@@ -103,6 +107,9 @@ static NSString *const ProductCollectionCellIdentifier = @"CommodityLibraryProdu
     
         [self requestProductWithCat:cellModel.category_id name:nil page:nil line:nil];
     }
+    if (tableView.tag == tableViewTagCommodityLibraryProductOrder) {
+        
+    }
 }
 
 #pragma mark - UITableViewDataSource
@@ -117,6 +124,9 @@ static NSString *const ProductCollectionCellIdentifier = @"CommodityLibraryProdu
             ProductCategoryModel *sectionModel = APPCT.viewModel.productCategorysAry[self.selectCellIndex];
             return sectionModel.children.count;
         }
+    }
+    if (tableView.tag == tableViewTagCommodityLibraryProductOrder) {
+        return 3;
     }
     return 1;
 }
@@ -145,6 +155,11 @@ static NSString *const ProductCollectionCellIdentifier = @"CommodityLibraryProdu
         }
         return cell;
     }
+    if (tableView.tag == tableViewTagCommodityLibraryProductOrder) {
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:OrderTableViewCellIdentifier forIndexPath:indexPath];
+        cell.textLabel.text = @"购物车";
+        return cell;
+    }
     return nil;
 //    UICollectionViewDelegate
 }
@@ -154,6 +169,9 @@ static NSString *const ProductCollectionCellIdentifier = @"CommodityLibraryProdu
 {
     ProductModle *model = APPCT.viewModel.productsAry[indexPath.row];
     [self requestProductDetailWithProductID:model.product_id];
+#pragma mark - 测试  完成之后使用上面
+   
+//    [self requestProductDetailWithProductID:@"531"];
 }
 
 
@@ -180,6 +198,18 @@ static NSString *const ProductCollectionCellIdentifier = @"CommodityLibraryProdu
     return UIEdgeInsetsMake(10, 10, 10, 10);
 }
 
+#pragma mark - ProductDetailViewDelegate
+
+- (void)productDetailViewCompleteBtnClickHidenWhiteContentView
+{
+#pragma mark - 这里把detail View 的数据处理
+    //这里把detail View 的数据处理
+    
+    
+    [self hideDetailView];
+}
+
+
 #pragma mark - Private method
 
 - (void)layoutWithAuto
@@ -205,7 +235,7 @@ static NSString *const ProductCollectionCellIdentifier = @"CommodityLibraryProdu
         make.width.equalTo(self.categoryTableView);
     }];
    
-    [self.orderMessageView mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self.orderTableView mas_makeConstraints:^(MASConstraintMaker *make) {
         if (@available(iOS 11.0, *)) {
             make.bottom.equalTo(self.view.mas_safeAreaLayoutGuideBottom);
         } else {
@@ -224,7 +254,7 @@ static NSString *const ProductCollectionCellIdentifier = @"CommodityLibraryProdu
         }
         make.left.equalTo(self.classTableView.mas_right);
         make.top.equalTo(self.view);
-        make.right.equalTo(self.orderMessageView.mas_left);
+        make.right.equalTo(self.orderTableView.mas_left);
     }];
 }
 
@@ -402,19 +432,23 @@ static NSString *const ProductCollectionCellIdentifier = @"CommodityLibraryProdu
     return _collectionView;
 }
 
-- (UITextView *)orderMessageView
+- (UITableView *)orderTableView
 {
-    if (!_orderMessageView) {
-        _orderMessageView = [[UITextView alloc] init];
-        _orderMessageView.backgroundColor = kUIColorFromRGB(0xf0f0f0);
+    if (!_orderTableView) {
+        _orderTableView = [self tableViewDefault];
+        _orderTableView.tag = tableViewTagCommodityLibraryProductOrder;
+        [_orderTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:OrderTableViewCellIdentifier];
     }
-    return _orderMessageView;
+    return _orderTableView;
 }
+
+
 
 - (ProductDetailView *)detailView
 {
     if (!_detailView) {
         _detailView = [[ProductDetailView alloc] initWithFrame:CGRectMake(0, kScreenHeight, kScreenWidth, kScreenHeight*2/3)];
+        _detailView.delegate = self;
     }
     return _detailView;
 }

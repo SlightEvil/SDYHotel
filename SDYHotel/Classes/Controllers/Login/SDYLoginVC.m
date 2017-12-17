@@ -131,7 +131,7 @@ CGFloat textFieldHeight = 60;
     if (!_userNameTextField) {
         
         _userNameTextField = [SDYTextField textFieldPlaceholder:@"账户" font:18 textColor:[UIColor blackColor]];
-        _userNameTextField.leftView = [self textFieldLeftViewWithImageName:@"account" size:CGSizeMake(leftViewWidth , leftViewHeight)];
+        _userNameTextField.leftView = [self textFieldLeftViewWithImageName:@"icon_account" size:CGSizeMake(leftViewWidth , leftViewHeight)];
         _userNameTextField.backgroundColor = [UIColor whiteColor];
         
     }
@@ -142,7 +142,7 @@ CGFloat textFieldHeight = 60;
 {
     if (!_passWorkTextField) {
         _passWorkTextField = [SDYTextField textFieldPlaceholder:@"密码" font:18 textColor:[UIColor blackColor]];
-        _passWorkTextField.leftView = [self textFieldLeftViewWithImageName:@"password" size:CGSizeMake(leftViewWidth, leftViewHeight)];
+        _passWorkTextField.leftView = [self textFieldLeftViewWithImageName:@"icon_password" size:CGSizeMake(leftViewWidth, leftViewHeight)];
         _passWorkTextField.secureTextEntry = YES;
         _passWorkTextField.backgroundColor = [UIColor whiteColor];
     }
