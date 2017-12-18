@@ -20,109 +20,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SDYHotel/Classes/Views/ProductDetailView/ProductDetailView.m"
-            timestampString = "535196031.01694"
+            timestampString = "535286894.084987"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "245"
-            endingLineNumber = "245"
+            startingLineNumber = "433"
+            endingLineNumber = "433"
             landmarkName = "-setDetailModel:"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SDYHotel/Classes/Views/ProductDetailView/ProductDetailView.m"
-            timestampString = "535196031.017488"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "202"
-            endingLineNumber = "202"
-            landmarkName = "-makeGradeBtnWithAttributesArray:"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__53-[ProductDetailView makeGradeBtnWithAttributesArray:]_block_invoke"
-                  moduleName = "SDYHotel"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/admin/Desktop/%E4%B8%89%E9%81%93%E6%98%93/xcodeProject/SDYHotel/SDYHotel/Classes/Views/ProductDetailView/ProductDetailView.m"
-                  timestampString = "535194421.542926"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "193"
-                  endingLineNumber = "193"
-                  offsetFromSymbolStart = "406">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__53-[ProductDetailView makeGradeBtnWithAttributesArray:]_block_invoke_2"
-                  moduleName = "SDYHotel"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/admin/Desktop/%E4%B8%89%E9%81%93%E6%98%93/xcodeProject/SDYHotel/SDYHotel/Classes/Views/ProductDetailView/ProductDetailView.m"
-                  timestampString = "535194421.546769"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "193"
-                  endingLineNumber = "193"
-                  offsetFromSymbolStart = "19">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SDYHotel/Classes/Views/ProductDetailView/ProductDetailView.m"
-            timestampString = "535196031.017889"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "217"
-            endingLineNumber = "217"
-            landmarkName = "-makeGradeBtnWithAttributesArray:"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__53-[ProductDetailView makeGradeBtnWithAttributesArray:]_block_invoke.167"
-                  moduleName = "SDYHotel"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/admin/Desktop/%E4%B8%89%E9%81%93%E6%98%93/xcodeProject/SDYHotel/SDYHotel/Classes/Views/ProductDetailView/ProductDetailView.m"
-                  timestampString = "535194227.027229"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "205"
-                  endingLineNumber = "205"
-                  offsetFromSymbolStart = "347">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__53-[ProductDetailView makeGradeBtnWithAttributesArray:]_block_invoke_2.176"
-                  moduleName = "SDYHotel"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/admin/Desktop/%E4%B8%89%E9%81%93%E6%98%93/xcodeProject/SDYHotel/SDYHotel/Classes/Views/ProductDetailView/ProductDetailView.m"
-                  timestampString = "535194227.030553"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "205"
-                  endingLineNumber = "205"
-                  offsetFromSymbolStart = "19">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

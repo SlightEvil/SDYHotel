@@ -34,7 +34,6 @@
 		8412E80B1FE26538008335AA /* ProductLibraryCollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8412E8091FE26538008335AA /* ProductLibraryCollectionCell.m */; };
 		8412E80C1FE26538008335AA /* ProductLibraryCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8412E80A1FE26538008335AA /* ProductLibraryCollectionCell.xib */; };
 		8412E8101FE280FF008335AA /* ProductDetailModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8412E80F1FE280FF008335AA /* ProductDetailModel.m */; };
-		8412E8161FE3618D008335AA /* SDYCommodityDetailVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8412E8151FE3618D008335AA /* SDYCommodityDetailVC.m */; };
 		8412E81A1FE377DB008335AA /* ProductDetailView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8412E8191FE377DB008335AA /* ProductDetailView.m */; };
 		845858A91FDCC9DD00ED0B98 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 845858A81FDCC9DD00ED0B98 /* AppDelegate.m */; };
 		845858AF1FDCC9DD00ED0B98 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 845858AD1FDCC9DD00ED0B98 /* Main.storyboard */; };
@@ -43,6 +42,10 @@
 		845858B71FDCC9DD00ED0B98 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 845858B61FDCC9DD00ED0B98 /* main.m */; };
 		848239A21FE619EE00AF19B7 /* ProdectLibraryOrderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 848239A01FE619EE00AF19B7 /* ProdectLibraryOrderCell.m */; };
 		848239A71FE64D1E00AF19B7 /* Function.m in Sources */ = {isa = PBXBuildFile; fileRef = 848239A61FE64D1E00AF19B7 /* Function.m */; };
+		848239AB1FE7969500AF19B7 /* ProductDetailViewCollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 848239A91FE7969500AF19B7 /* ProductDetailViewCollectionCell.m */; };
+		848239AC1FE7969500AF19B7 /* ProductDetailViewCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 848239AA1FE7969500AF19B7 /* ProductDetailViewCollectionCell.xib */; };
+		848239B01FE799E700AF19B7 /* ProductDetailViewCollectionReusableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 848239AE1FE799E700AF19B7 /* ProductDetailViewCollectionReusableView.m */; };
+		848239B11FE799E700AF19B7 /* ProductDetailViewCollectionReusableView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 848239AF1FE799E700AF19B7 /* ProductDetailViewCollectionReusableView.xib */; };
 		84DB2AC91FDD234C00D1F375 /* UIColor+Category.m in Sources */ = {isa = PBXBuildFile; fileRef = 84DB2AC81FDD234C00D1F375 /* UIColor+Category.m */; };
 		84DB2ACC1FDD28DB00D1F375 /* SDYTitleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 84DB2ACB1FDD28DB00D1F375 /* SDYTitleView.m */; };
 		84DB2ACF1FDD2A3A00D1F375 /* UILabel+Category.m in Sources */ = {isa = PBXBuildFile; fileRef = 84DB2ACE1FDD2A3A00D1F375 /* UILabel+Category.m */; };
@@ -106,8 +109,6 @@
 		8412E80A1FE26538008335AA /* ProductLibraryCollectionCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ProductLibraryCollectionCell.xib; sourceTree = "<group>"; };
 		8412E80E1FE280FF008335AA /* ProductDetailModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProductDetailModel.h; sourceTree = "<group>"; };
 		8412E80F1FE280FF008335AA /* ProductDetailModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ProductDetailModel.m; sourceTree = "<group>"; };
-		8412E8141FE3618D008335AA /* SDYCommodityDetailVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDYCommodityDetailVC.h; sourceTree = "<group>"; };
-		8412E8151FE3618D008335AA /* SDYCommodityDetailVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SDYCommodityDetailVC.m; sourceTree = "<group>"; };
 		8412E8181FE377DB008335AA /* ProductDetailView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProductDetailView.h; sourceTree = "<group>"; };
 		8412E8191FE377DB008335AA /* ProductDetailView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ProductDetailView.m; sourceTree = "<group>"; };
 		845858A41FDCC9DD00ED0B98 /* SDYHotel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SDYHotel.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -122,6 +123,12 @@
 		848239A01FE619EE00AF19B7 /* ProdectLibraryOrderCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ProdectLibraryOrderCell.m; sourceTree = "<group>"; };
 		848239A51FE64D1E00AF19B7 /* Function.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Function.h; sourceTree = "<group>"; };
 		848239A61FE64D1E00AF19B7 /* Function.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Function.m; sourceTree = "<group>"; };
+		848239A81FE7969500AF19B7 /* ProductDetailViewCollectionCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProductDetailViewCollectionCell.h; sourceTree = "<group>"; };
+		848239A91FE7969500AF19B7 /* ProductDetailViewCollectionCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ProductDetailViewCollectionCell.m; sourceTree = "<group>"; };
+		848239AA1FE7969500AF19B7 /* ProductDetailViewCollectionCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ProductDetailViewCollectionCell.xib; sourceTree = "<group>"; };
+		848239AD1FE799E700AF19B7 /* ProductDetailViewCollectionReusableView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProductDetailViewCollectionReusableView.h; sourceTree = "<group>"; };
+		848239AE1FE799E700AF19B7 /* ProductDetailViewCollectionReusableView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ProductDetailViewCollectionReusableView.m; sourceTree = "<group>"; };
+		848239AF1FE799E700AF19B7 /* ProductDetailViewCollectionReusableView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ProductDetailViewCollectionReusableView.xib; sourceTree = "<group>"; };
 		84DB2AC71FDD234C00D1F375 /* UIColor+Category.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIColor+Category.h"; sourceTree = "<group>"; };
 		84DB2AC81FDD234C00D1F375 /* UIColor+Category.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Category.m"; sourceTree = "<group>"; };
 		84DB2ACA1FDD28DB00D1F375 /* SDYTitleView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDYTitleView.h; sourceTree = "<group>"; };
@@ -190,8 +197,6 @@
 			children = (
 				840E9F531FDCE0690027E1E2 /* SDYCommodityLibraryVC.h */,
 				840E9F541FDCE0690027E1E2 /* SDYCommodityLibraryVC.m */,
-				8412E8141FE3618D008335AA /* SDYCommodityDetailVC.h */,
-				8412E8151FE3618D008335AA /* SDYCommodityDetailVC.m */,
 			);
 			path = "Commodity Library";
 			sourceTree = "<group>";
@@ -360,6 +365,12 @@
 			children = (
 				8412E8181FE377DB008335AA /* ProductDetailView.h */,
 				8412E8191FE377DB008335AA /* ProductDetailView.m */,
+				848239A81FE7969500AF19B7 /* ProductDetailViewCollectionCell.h */,
+				848239A91FE7969500AF19B7 /* ProductDetailViewCollectionCell.m */,
+				848239AA1FE7969500AF19B7 /* ProductDetailViewCollectionCell.xib */,
+				848239AD1FE799E700AF19B7 /* ProductDetailViewCollectionReusableView.h */,
+				848239AE1FE799E700AF19B7 /* ProductDetailViewCollectionReusableView.m */,
+				848239AF1FE799E700AF19B7 /* ProductDetailViewCollectionReusableView.xib */,
 			);
 			path = ProductDetailView;
 			sourceTree = "<group>";
@@ -571,10 +582,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				848239AC1FE7969500AF19B7 /* ProductDetailViewCollectionCell.xib in Resources */,
 				845858B41FDCC9DD00ED0B98 /* LaunchScreen.storyboard in Resources */,
 				845858B11FDCC9DD00ED0B98 /* Assets.xcassets in Resources */,
 				8412E80C1FE26538008335AA /* ProductLibraryCollectionCell.xib in Resources */,
 				845858AF1FDCC9DD00ED0B98 /* Main.storyboard in Resources */,
+				848239B11FE799E700AF19B7 /* ProductDetailViewCollectionReusableView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -638,7 +651,6 @@
 			files = (
 				840E9F581FDCE07B0027E1E2 /* SDYRecordVC.m in Sources */,
 				8412E8001FE200CD008335AA /* ProductCategoryModel.m in Sources */,
-				8412E8161FE3618D008335AA /* SDYCommodityDetailVC.m in Sources */,
 				8412E7CA1FDE998C008335AA /* UIButton+Category.m in Sources */,
 				845858B71FDCC9DD00ED0B98 /* main.m in Sources */,
 				8412E7D61FDF6F7D008335AA /* NetWorkServices.m in Sources */,
@@ -661,7 +673,9 @@
 				840E9F551FDCE0690027E1E2 /* SDYCommodityLibraryVC.m in Sources */,
 				8412E7E61FE0B016008335AA /* UIView+Category.m in Sources */,
 				840E9F5E1FDCE0A40027E1E2 /* SDYMoneyCenterVC.m in Sources */,
+				848239AB1FE7969500AF19B7 /* ProductDetailViewCollectionCell.m in Sources */,
 				840E9F521FDCE0260027E1E2 /* SDYHomeVC.m in Sources */,
+				848239B01FE799E700AF19B7 /* ProductDetailViewCollectionReusableView.m in Sources */,
 				84DB2ACF1FDD2A3A00D1F375 /* UILabel+Category.m in Sources */,
 				845858A91FDCC9DD00ED0B98 /* AppDelegate.m in Sources */,
 				84DB2AC91FDD234C00D1F375 /* UIColor+Category.m in Sources */,

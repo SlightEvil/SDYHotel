@@ -23,5 +23,7 @@
 
 @property (nonatomic, weak) id <ProductDetailViewDelegate>delegate;
 
+//清理数据
+- (void)clearData;
 
 @end

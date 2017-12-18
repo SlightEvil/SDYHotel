@@ -29,7 +29,7 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
 @property (nonatomic) ProductDetailView *detailView;
 @property (nonatomic) UIButton *blackView;
 
-
+@property (nonatomic, assign) BOOL collectionIsReloadData;
 @property (nonatomic) NSInteger selectCellIndex;
 
 
@@ -50,6 +50,7 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
     [self.view addSubview:self.orderTableView];
     
     [self layoutWithAuto];
+    
     
 }
 
@@ -99,6 +100,8 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
     if (tableView.tag == tableViewTagCommodityLibraryProductCategory) {
         self.selectCellIndex = indexPath.row;
         [self.classTableView reloadData];
+        
+        self.collectionIsReloadData = NO;
     }
     if (tableView.tag == tableViewTagCommodityLibraryProductClass) {
 
@@ -178,7 +181,7 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
 #pragma mark - UICollectionViewDataSource
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    return APPCT.viewModel.productsAry.count;
+    return self.collectionIsReloadData ? APPCT.viewModel.productsAry.count : 0;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
@@ -187,6 +190,10 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
 
     ProductModle *model = APPCT.viewModel.productsAry[indexPath.row];
     cell.title.text = model.product_name;
+    
+    UIView *selectView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, cell.bounds.size.width, cell.bounds.size.height)];
+    selectView.backgroundColor = kUIColorFromRGB(0x06ce8a);
+    cell.selectedBackgroundView = selectView;
     
     return cell;
 }
@@ -204,7 +211,6 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
 {
 #pragma mark - 这里把detail View 的数据处理
     //这里把detail View 的数据处理
-    
     
     [self hideDetailView];
 }
@@ -328,7 +334,8 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
         }];
     
         APPCT.viewModel.productsAry = productModelsAry;
-        [WeakSelf.collectionView reloadData];
+//        [WeakSelf.collectionView reloadData];
+        WeakSelf.collectionIsReloadData = YES;
         
     } faile:^(NSString *errorDescription) {
         [self alertTitle:errorDescription message:nil complete:nil];
@@ -343,28 +350,37 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
     
     __weak typeof(self)WeakSelf = self;
     
-    [APPCT.netWorkService GET:kSDYNetWorkProductDetailUrl parameters:@{@"id":productid} success:^(NSDictionary *data, NSString *errorDescription) {
-        
-        __strong typeof(WeakSelf)strongSelf = WeakSelf;
-        
-        NSInteger requestStatus = [data[status] integerValue];
-        NSString *backMessage = data[message];
-        
-        if (requestStatus != 0) {
-            [strongSelf alertTitle:backMessage message:nil complete:nil];
-            return ;
-        }
-        /*
-         attributes @[]   product @{}  shops @{}  skus @{}
-         */
-        NSDictionary *dic = data[@"data"];
-        APPCT.productDetailModel = [ProductDetailModel cz_objWithDict:dic];
-        
-        [strongSelf showDetailView];
-        
-    } faile:^(NSString *errorDescription) {
-        [WeakSelf alertTitle:errorDescription message:nil complete:nil];
-    }];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [APPCT.netWorkService GET:kSDYNetWorkProductDetailUrl parameters:@{@"id":productid} success:^(NSDictionary *data, NSString *errorDescription) {
+            
+            __strong typeof(WeakSelf)strongSelf = WeakSelf;
+            
+            NSInteger requestStatus = [data[status] integerValue];
+            NSString *backMessage = data[message];
+            
+            if (requestStatus != 0) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [strongSelf alertTitle:backMessage message:nil complete:nil];
+                });
+                return ;
+            }
+            /*
+             attributes @[]   product @{}  shops @{}  skus @{}
+             */
+            NSDictionary *dic = data[@"data"];
+            APPCT.productDetailModel = [ProductDetailModel cz_objWithDict:dic];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [strongSelf showDetailView];
+            });
+        } faile:^(NSString *errorDescription) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [WeakSelf alertTitle:errorDescription message:nil complete:nil];
+            });
+            
+        }];
+    });
+    
+   
 }
 
 - (void)showDetailView
@@ -388,11 +404,19 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
         self.detailView.frame = frame;
     } completion:^(BOOL finished) {
         [self.blackView removeFromSuperview];
+        [self.detailView  clearData];
     }];
 }
 
 
 #pragma mark - Getter and Setter
+
+- (void)setCollectionIsReloadData:(BOOL)collectionIsReloadData
+{
+    _collectionIsReloadData = collectionIsReloadData;
+    [self.collectionView reloadData];
+}
+
 
 - (UITableView *)categoryTableView
 {
