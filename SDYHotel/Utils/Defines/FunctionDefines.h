@@ -10,9 +10,20 @@
 #define FunctionDefines_h
 
 
+/**
+ tableView Tag 商品库的tag
+
+ */
 #define tableViewTagCommodityLibraryProductCategory     15001
 #define tableViewTagCommodityLibraryProductClass        15002
 #define tableViewTagCommodityLibraryProductOrder        15003
+
+/**
+ 我的订单
+ */
+#define tableViewTagMyOrderOrderList                    15004
+#define tableViewTagMyOrderAdvanceOrder                 15005
+#define tableViewTagMyOrderPostOrder                  15006
 
 
 #define buttonTagCommodityLibraryProductDetailViewGrade     20000

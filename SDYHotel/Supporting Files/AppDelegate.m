@@ -29,13 +29,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
- 
     [self setTabbarConVC];
-//    [[AppContext sharedAppContext] showTitleView];
-    
-    [AppContext sharedAppContext].isLogin = NO;
-    
-
 
     // Override point for customization after application launch.
     return YES;

@@ -32,20 +32,20 @@ FOUNDATION_EXPORT NSString *const ProductDetailProductKey;
 @interface ProductDetailAttributesModel : NSObject
 
 //规格分组名称
-@property (nonatomic, copy) NSString *group_name;
+@property (nonatomic) NSString *group_name;
 
 //规格名称
-@property (nonatomic, copy) NSString *attribute_name;
+@property (nonatomic) NSString *attribute_name;
 //单品id
-@property (nonatomic, copy) NSString *sku_id;
+@property (nonatomic) NSString *sku_id;
 //单品库存
-@property (nonatomic, copy) NSString *stock;
+@property (nonatomic) NSString *stock;
 //单品销量
-@property (nonatomic, copy) NSString *sales;
+@property (nonatomic) NSString *sales;
 //销量基数
-@property (nonatomic, copy) NSString *show_sales;
+@property (nonatomic) NSString *show_sales;
 //级别
-@property (nonatomic, copy) NSMutableArray *attributes;
+@property (nonatomic) NSMutableArray *attributes;
 
 
 
@@ -56,39 +56,39 @@ FOUNDATION_EXPORT NSString *const ProductDetailProductKey;
 @interface ProductDetailProductModel : NSObject
 
 //计量单位
-@property (nonatomic, copy) NSString *unit;
+@property (nonatomic) NSString *unit;
 //产品名称
-@property (nonatomic, copy) NSString *product_name;
+@property (nonatomic) NSString *product_name;
 //产品副名称
-@property (nonatomic, copy) NSString *product_sub_name;
+@property (nonatomic) NSString *product_sub_name;
 //描述
-@property (nonatomic, copy) NSString *product_description;
+@property (nonatomic) NSString *product_description;
 //分类id
-@property (nonatomic, copy) NSString *category_id;
+@property (nonatomic) NSString *category_id;
 //商场价格
-@property (nonatomic, copy) NSString *mall_price;
+@property (nonatomic) NSString *mall_price;
 //商店名字
-@property (nonatomic, copy) NSString *shop_name;
+@property (nonatomic) NSString *shop_name;
 //库存
-@property (nonatomic, copy) NSString *stock;
+@property (nonatomic) NSString *stock;
 //是否上架
-@property (nonatomic, copy) NSString *is_on_sale;
+@property (nonatomic) NSString *is_on_sale;
 //市场价格
-@property (nonatomic, copy) NSString *market_price;
+@property (nonatomic) NSString *market_price;
 //产品ID
-@property (nonatomic, copy) NSString *product_id;
+@property (nonatomic) NSString *product_id;
 //是否推荐
-@property (nonatomic, copy) NSString *is_recommand;
+@property (nonatomic) NSString *is_recommand;
 //是否首页显示
-@property (nonatomic, copy) NSString *show_index;
+@property (nonatomic) NSString *show_index;
 //缩略图
-@property (nonatomic, copy) NSString *thumbnail;
+@property (nonatomic) NSString *thumbnail;
 //销售
-@property (nonatomic, copy) NSString *sales;
+@property (nonatomic) NSString *sales;
 //销售基数
-@property (nonatomic, copy) NSString *show_sales;
+@property (nonatomic) NSString *show_sales;
 //商店id
-@property (nonatomic, copy) NSString *shop_id;
+@property (nonatomic) NSString *shop_id;
 
 @end
 

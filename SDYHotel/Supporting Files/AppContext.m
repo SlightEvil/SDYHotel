@@ -17,7 +17,7 @@
 
 @property (nonatomic) UIWindow *topWindow;
 
-
+@property (nonatomic) UIActivityIndicatorView *activity;
 
 
 
@@ -38,8 +38,7 @@ single_implementation(AppContext)
 
 - (void)showLoginViewCon
 {
-     SDYBaseVC*viewCon = [NSClassFromString(@"SDYLoginVC") new];
-    
+    SDYBaseVC*viewCon = [NSClassFromString(@"SDYLoginVC") new];
    [[self topViewController] presentViewController:viewCon animated:YES completion:nil];
 }
 
@@ -48,14 +47,20 @@ single_implementation(AppContext)
     [[UIApplication sharedApplication] setStatusBarHidden:hidden];
 }
 
-- (void)showProductDetailViewWithModle:(ProductDetailModel *)productDetailModel
+- (void)showActivity
 {
+    [[UIApplication sharedApplication].keyWindow addSubview:self.activity];
+    self.activity.center = [UIApplication sharedApplication].keyWindow.center;
+    [self.activity startAnimating];
     
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
 }
 
-- (void)hideProductDetailView
+- (void)hiddenActivity
 {
-    
+    [self.activity stopAnimating];
+    [self.activity removeFromSuperview];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 }
 
 
@@ -111,7 +116,8 @@ single_implementation(AppContext)
   @{@"title":@"商品库",@"imageName":@"gift",@"selectImageName":@"gift",@"classString":@"SDYCommodityLibraryVC"},
   @{@"title":@"收藏记录",@"imageName":@"gift",@"selectImageName":@"gift",@"classString":@"SDYRecordVC"},
   @{@"title":@"我的订单",@"imageName":@"gift",@"selectImageName":@"gift",@"classString":@"SDYMyOrderVC"},
-  @{@"title":@"财务中心",@"imageName":@"gift",@"selectImageName":@"gift",@"classString":@"SDYMoneyCenterVC"},@{@"title":@"个人中心",@"imageName":@"gift",@"selectImageName":@"gift",@"classString":@"SDYPersonalCenterVC"}
+//  @{@"title":@"财务中心",@"imageName":@"gift",@"selectImageName":@"gift",@"classString":@"SDYMoneyCenterVC"},
+  @{@"title":@"个人中心",@"imageName":@"gift",@"selectImageName":@"gift",@"classString":@"SDYPersonalCenterVC"}
   ];
         
         NSMutableArray *array = [NSMutableArray array];
@@ -142,6 +148,13 @@ single_implementation(AppContext)
     return _viewModel;
 }
 
-
+- (UIActivityIndicatorView *)activity
+{
+    if (!_activity) {
+        _activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        _activity.hidesWhenStopped = YES;
+    }
+    return _activity;
+}
 
 @end

@@ -10,9 +10,10 @@
 #import "UIButton+Category.h"
 #import "UILabel+Category.h"
 #import "Masonry.h"
+#import "Function.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 #import "ProductDetailModel.h"
-#import "Function.h"
+#import "ProductShopCartModel.h"
 
 #import "ProductDetailViewCollectionCell.h"
 #import "ProductDetailViewCollectionReusableView.h"
@@ -52,6 +53,7 @@ static NSString *const ProductDetailViewCollectionReusableViewIdentifier = @"Pro
 
 static NSString *const attributesNameKey = @"attribute_name";
 static NSString *const attributesIdKey = @"attribute_id";
+static NSString *const RMB = @"¥ ";
 
 @interface ProductDetailView ()<UITableViewDelegate,UITableViewDataSource,UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout>
 
@@ -74,12 +76,14 @@ static NSString *const attributesIdKey = @"attribute_id";
 //确定
 @property (nonatomic) UIButton *comppleteBtn;
 
+//获取的商品model
 @property (nonatomic) ProductDetailProductModel *productModel;
-
-@property (nonatomic) NSMutableArray *gradeBtnTagArray;//
-@property (nonatomic) NSMutableArray *unitBtnTagArray;//没用到暂时
-@property (nonatomic) NSMutableArray *priceWithTagArray;//
+//自定义的价格model
 @property (nonatomic) PriceModel *price;//
+//获取的供应商model
+@property (nonatomic) ProductDetailShopModel *shopModel;
+//获取的单品model
+@property (nonatomic) ProductDetailSkusModel *skusModel;
 
 @property (nonatomic) NSMutableArray *productPriceArray;
 
@@ -124,6 +128,7 @@ static NSString *const attributesIdKey = @"attribute_id";
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (self.detailModel.shops.count > 0) {
+        self.shopModel = self.detailModel.shops[indexPath.row];
         ProductDetailShopModel *shopModel = self.detailModel.shops[indexPath.row];
         [self requestProductDetailWithProductName:self.productModel.product_name shopID:shopModel.shop_id];
     }
@@ -138,6 +143,7 @@ static NSString *const attributesIdKey = @"attribute_id";
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:ProductDetailViewCellIdentifier forIndexPath:indexPath];
     ProductDetailShopModel *shopModel = self.detailModel.shops[indexPath.row];
+    
     cell.textLabel.text = shopModel.shop_name;
     cell.textLabel.adjustsFontSizeToFitWidth = YES;
     return cell;
@@ -153,20 +159,13 @@ static NSString *const attributesIdKey = @"attribute_id";
   //只有一个section  单价
     if (self.detailModel.skus.count == 1) {//只有单价超过2个标示有2个section
         ProductDetailSkusModel *skusModel = [self.detailModel.skus firstObject];
-        self.priceLabel.text = [NSString stringWithFormat:@"¥ %@",skusModel.mall_price];
+        self.priceLabel.text = [NSString stringWithFormat:@"%@%@",RMB,skusModel.mall_price];
+        
+        //一切为了返回值
+        self.skusModel = skusModel;
         return;
     }
-    //有2个section 级别  单位
-    ProductDetailAttributesModel *attributesModel = self.detailModel.attributes[indexPath.section];
-    NSDictionary *dic = attributesModel.attributes[indexPath.row];
-    
-    if (indexPath.section == 0) {
-        self.price.grade = dic[attributesIdKey];
-    }
-    if (indexPath.section == 1) {
-        self.price.unit = dic[attributesIdKey];
-    }
-    
+ 
     //如果有多个section 中的row 被选中 取消其他的选中的row
     NSArray<NSIndexPath *> *selectAry = [collectionView indexPathsForSelectedItems];
     [selectAry enumerateObjectsUsingBlock:^(NSIndexPath * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -183,6 +182,17 @@ static NSString *const attributesIdKey = @"attribute_id";
         }
     }];
     
+    //有2个section 级别  单位
+    ProductDetailAttributesModel *attributesModel = self.detailModel.attributes[indexPath.section];
+    NSDictionary *dic = attributesModel.attributes[indexPath.row];
+    
+    if (indexPath.section == 0) {
+        self.price.grade = dic[attributesIdKey];
+    }
+    if (indexPath.section == 1) {
+        self.price.unit = dic[attributesIdKey];
+    }
+    
     NSString *priceID = [PriceModel stringWithModel:self.price];
     
     //根据选择2个section中的row 获取的id 判断价格
@@ -190,6 +200,8 @@ static NSString *const attributesIdKey = @"attribute_id";
         ProductDetailSkusModel *skusModel = obj;
         if ([priceID isEqualToString:skusModel.attributes]) {
             self.priceLabel.text = [NSString stringWithFormat:@"¥ %@",skusModel.mall_price];
+            //一切为了返回值
+            self.skusModel = skusModel;
         }
     }];
 }
@@ -272,16 +284,56 @@ static NSString *const attributesIdKey = @"attribute_id";
  */
 - (void)completeBtnClick
 {
-    [self clearData];
-    if ([self.delegate respondsToSelector:@selector(productDetailViewCompleteBtnClickHidenWhiteContentView)]) {
-        [self.delegate productDetailViewCompleteBtnClickHidenWhiteContentView];
+    ProductShopCartModel *cartModel = [[ProductShopCartModel alloc] init];
+    if ([self.priceLabel.text isEqualToString:@"请在下面选择规格"] || [self.numberTextField.text isEqualToString:@"0"]) {
+        
+        cartModel = nil;
+    } else {
+        cartModel.productName = self.nameLabel.text;
+        cartModel.shopName = self.shopNameLabel.text;
+        cartModel.number = [self.numberTextField.text intValue];
+        cartModel.unitPrice = [[self.priceLabel.text substringFromIndex:RMB.length -1] floatValue];
+        cartModel.unit = self.productModel.unit;
+        cartModel.skusModel = self.skusModel;
+        cartModel.shopModel = self.shopModel;
+        
+        __block NSString *value1 = @"";
+        __block NSString *value2 = @"";
+        NSArray *ary = [self.skusModel.attributes componentsSeparatedByString:@","];
+        
+        if (self.detailModel.attributes.count == 1) {
+            ProductDetailAttributesModel *attributesModle = [self.detailModel.attributes firstObject];
+            [attributesModle.attributes enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([ary[0] isEqualToString:obj[attributesIdKey]]) {
+                    value1 = obj[attributesNameKey];
+                }
+            }];
+        
+            cartModel.attributes = value1;
+        } else {
+            [self.detailModel.attributes enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                
+                ProductDetailAttributesModel *attributesModle = obj;
+                [attributesModle.attributes enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    
+                    NSDictionary *dic = obj;
+                    
+                    if ([ary[0] isEqualToString:dic[attributesIdKey]]) {
+                        value1 = dic[attributesNameKey];
+                    }
+                    if ([ary[1] isEqualToString:dic[attributesIdKey]]) {
+                        value2 = dic[attributesNameKey];
+                    }
+                }];
+            }];
+            cartModel.attributes = [NSString stringWithFormat:@"%@,%@",value1,value2];
+        }
     }
     
-    /*
-     获取 价格 ，获取number 
-     
-     */
-    
+    if ([self.delegate respondsToSelector:@selector(productDetailViewCompleteBtnClickHidenWhiteContentView:)]) {
+        [self.delegate productDetailViewCompleteBtnClickHidenWhiteContentView:cartModel];
+    }
+    [self clearData];
 }
 
 #pragma mark - private method
@@ -405,17 +457,13 @@ static NSString *const attributesIdKey = @"attribute_id";
             
         }];
     });
-    
-   
 }
 
 //清除数据
 - (void)clearData
 {
     self.numberTextField.text = @"0";
-    self.gradeBtnTagArray = [NSMutableArray array];
-    self.unitBtnTagArray = [NSMutableArray array];
-    self.priceWithTagArray = [NSMutableArray array];
+    [self.price clearData];
 }
 
 
@@ -434,16 +482,14 @@ static NSString *const attributesIdKey = @"attribute_id";
     self.detailTextView.text = self.productModel.product_description;
     self.shopNameLabel.text = self.productModel.shop_name;
     self.priceLabel.text = [NSString stringWithFormat:@"请在下面选择规格"];
+    self.numberTextField.text = @"0";
     
     [self.iconImage sd_setImageWithURL:[NSURL URLWithString:self.productModel.thumbnail ? kSDYImageUrl(self.productModel.thumbnail) : nil]];
     
-//    [self.detailModel.shops enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-//        ProductDetailShopModel *shopModel = obj;
-//        if ([self.productModel.shop_name isEqualToString:shopModel.shop_name]) {
-//            [self.shopTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:idx inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
-//        }
-//    }];
-    
+    if (!self.shopModel) {
+       self.shopModel = _detailModel.shops[0];
+    }
+
 }
 
 - (UIImageView *)iconImage
@@ -591,35 +637,8 @@ static NSString *const attributesIdKey = @"attribute_id";
     return _attributesCollectionView;
 }
 
-- (NSMutableArray *)gradeBtnTagArray
-{
-    if (!_gradeBtnTagArray) {
-        _gradeBtnTagArray = [NSMutableArray array];
-    }
-    return _gradeBtnTagArray;
-}
-
-- (NSMutableArray *)unitBtnTagArray
-{
-    if (!_unitBtnTagArray) {
-        _unitBtnTagArray = [NSMutableArray array];
-    }
-    return _unitBtnTagArray;
-}
-
-- (NSMutableArray *)priceWithTagArray
-{
-    if (!_priceWithTagArray) {
-        _priceWithTagArray = [NSMutableArray array];
-    }
-    return _priceWithTagArray;
-}
-
 - (void)dealloc
 {
-    self.gradeBtnTagArray = [NSMutableArray array];
-    self.unitBtnTagArray = [NSMutableArray array];
-    self.priceWithTagArray = [NSMutableArray array];
     self.detailModel = nil;
     self.productModel = nil;
 }

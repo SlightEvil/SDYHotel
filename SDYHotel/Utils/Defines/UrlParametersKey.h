@@ -41,9 +41,27 @@ static NSString *const shop_id =            @"shop_id";
 //此order_id正式从订单列表接口拿到的order_id
 static NSString *const order_id =           @"order_id";
 
+static NSString *const shop_name =          @"shop_name";
+//供应商号码
+static NSString *const shop_phone =         @"shop_phone";
+
+//
+static NSString *const detail_id =          @"detail_id";
+//单品id
+static NSString *const sku_id =             @"sku_id";
+
+static NSString *const product_id =         @"product_id";
+
+static NSString *const attributes =         @"attributes";
+
+static NSString *const quantity =           @"quantity";
+
 
 static NSString *const status =             @"status";
+
 static NSString *const message =            @"message";
+
+
 
 
 #endif /* UrlParametersKey_h */

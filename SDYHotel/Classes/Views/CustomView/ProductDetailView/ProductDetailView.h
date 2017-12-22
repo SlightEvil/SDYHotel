@@ -8,10 +8,11 @@
 
 #import <UIKit/UIKit.h>
 @class ProductDetailModel;
+@class ProductShopCartModel;
 
 @protocol ProductDetailViewDelegate  <NSObject>
 
-- (void)productDetailViewCompleteBtnClickHidenWhiteContentView;
+- (void)productDetailViewCompleteBtnClickHidenWhiteContentView:(ProductShopCartModel *)shopCartModel;
 
 
 @end

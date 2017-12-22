@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="MyOrdreAdvanceOrderCellIdentifier" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="tQk-ry-s4E" customClass="MyOrderListOrderCell">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="49"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="tQk-ry-s4E" id="zHL-zp-PwR">
+                <rect key="frame" x="0.0" y="0.0" width="375" height="48.5"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DfT-Dj-27Q">
+                        <rect key="frame" x="125" y="0.0" width="125" height="48.5"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xao-fT-v4j">
+                        <rect key="frame" x="250" y="0.0" width="125" height="48.5"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5rJ-ry-Kvw">
+                        <rect key="frame" x="0.0" y="0.0" width="125" height="48.5"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="xao-fT-v4j" firstAttribute="leading" secondItem="DfT-Dj-27Q" secondAttribute="trailing" id="1p8-Of-nC4"/>
+                    <constraint firstItem="DfT-Dj-27Q" firstAttribute="width" secondItem="xao-fT-v4j" secondAttribute="width" id="2W5-Rp-F8a"/>
+                    <constraint firstItem="5rJ-ry-Kvw" firstAttribute="width" secondItem="DfT-Dj-27Q" secondAttribute="width" id="2to-gc-sdf"/>
+                    <constraint firstAttribute="bottom" secondItem="xao-fT-v4j" secondAttribute="bottom" id="83o-Gq-bSC"/>
+                    <constraint firstAttribute="trailing" secondItem="xao-fT-v4j" secondAttribute="trailing" id="Bf4-F1-HCK"/>
+                    <constraint firstItem="xao-fT-v4j" firstAttribute="top" secondItem="zHL-zp-PwR" secondAttribute="top" id="CkW-mQ-Egx"/>
+                    <constraint firstItem="DfT-Dj-27Q" firstAttribute="leading" secondItem="5rJ-ry-Kvw" secondAttribute="trailing" id="VfD-J6-jvA"/>
+                    <constraint firstAttribute="bottom" secondItem="5rJ-ry-Kvw" secondAttribute="bottom" id="Vfr-Tl-OFX"/>
+                    <constraint firstItem="5rJ-ry-Kvw" firstAttribute="top" secondItem="zHL-zp-PwR" secondAttribute="top" id="bch-Jf-Uy8"/>
+                    <constraint firstItem="5rJ-ry-Kvw" firstAttribute="leading" secondItem="zHL-zp-PwR" secondAttribute="leading" id="btw-OP-NZP"/>
+                    <constraint firstAttribute="bottom" secondItem="DfT-Dj-27Q" secondAttribute="bottom" id="ng8-JS-uod"/>
+                    <constraint firstItem="DfT-Dj-27Q" firstAttribute="top" secondItem="zHL-zp-PwR" secondAttribute="top" id="zh3-p5-97X"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="numberUnitLabel" destination="DfT-Dj-27Q" id="Xbw-EH-gYU"/>
+                <outlet property="productNameLabel" destination="5rJ-ry-Kvw" id="JOv-GX-a1P"/>
+                <outlet property="totalPriceLabel" destination="xao-fT-v4j" id="o8Y-ec-csM"/>
+            </connections>
+            <point key="canvasLocation" x="-410.5" y="-22.5"/>
+        </tableViewCell>
+    </objects>
+</document>

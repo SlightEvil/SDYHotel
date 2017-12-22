@@ -13,9 +13,7 @@
 - (void)awakeFromNib {
     [super awakeFromNib];
     
-    self.title.font = [UIFont systemFontOfSize:18];
-    self.title.adjustsFontSizeToFitWidth = YES;
-    self.title.backgroundColor = kUIColorFromRGB(0xf0f0f0);
+
     // Initialization code
 }
 

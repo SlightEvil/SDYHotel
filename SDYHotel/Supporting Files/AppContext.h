@@ -45,6 +45,15 @@ single_interface(AppContext)
 
 
 
+/**
+显示加载
+ */
+- (void)showActivity;
+
+/**
+ 隐藏加载
+ */
+- (void)hiddenActivity;
 
 /**
  显示表头
@@ -64,8 +73,6 @@ single_interface(AppContext)
 - (void)statusBarHidden:(BOOL)hidden;
 
 
-- (void)showProductDetailViewWithModle:(ProductDetailModel *)productDetailModel;
-- (void)hideProductDetailView;
 
 
 

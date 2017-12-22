@@ -55,6 +55,8 @@ CGFloat textFieldHeight = 60;
 {
     [self.view endEditing:YES];
     
+    [APPCT showActivity];
+    
     NSString *user = self.userNameTextField.text;
     NSString *passWord = self.passWorkTextField.text;
     
@@ -75,6 +77,7 @@ CGFloat textFieldHeight = 60;
         
         if (requestState != 0) {
             [strongSelf alertTitle:@"登录失败" message:messageValue complete:nil];
+            [APPCT hiddenActivity];
             return;
         }
         
@@ -83,9 +86,11 @@ CGFloat textFieldHeight = 60;
         APPCT.loginUser = [LoginUser cz_objWithDict:dic];
         APPCT.isLogin = YES;
         [strongSelf dismissViewControllerAnimated:YES completion:nil];
+        [APPCT hiddenActivity];
     
     } fail:^(NSString *errorDescription) {
         [WeakSelf alertTitle:@"登录失败" message:errorDescription complete:nil];
+        [APPCT hiddenActivity];
     }];
 }
 

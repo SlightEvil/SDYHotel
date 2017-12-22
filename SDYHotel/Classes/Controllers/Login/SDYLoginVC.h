@@ -13,8 +13,6 @@
 
 void sdy_asyncMainQueue(void(^block)(void));
 
-
-
 @interface SDYLoginVC : SDYBaseVC
 
 @end
