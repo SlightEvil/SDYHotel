@@ -15,6 +15,9 @@
 #import "ProductLibraryCollectionCell.h"
 #import "ProductLibraryOrderCell.h"
 
+#import "ProductCollectionCell.h"
+
+
 #import "ProductDetailView.h"
 #import "ProductOrderCartTableFootView.h"
 
@@ -237,10 +240,14 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    ProductLibraryCollectionCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:ProductCollectionCellIdentifier forIndexPath:indexPath];
-
+//    ProductLibraryCollectionCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:ProductCollectionCellIdentifier forIndexPath:indexPath];
+//
+//    ProductModle *model = APPCT.viewModel.productsAry[indexPath.row];
+//    cell.title.text = model.product_name;
+    
+    ProductCollectionCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:ProductCollectionCellIdentifier forIndexPath:indexPath];
     ProductModle *model = APPCT.viewModel.productsAry[indexPath.row];
-    cell.title.text = model.product_name;
+    cell.productModel = model;
     
     UIView *selectView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, cell.bounds.size.width, cell.bounds.size.height)];
     selectView.backgroundColor = kUIColorFromRGB(0x06ce8a);
@@ -271,7 +278,6 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
     //判断 是否存在这个数据
     __block  BOOL isContain = NO;
 
-    
     [self.productOrderArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         
             ProductShopCartModel *model = obj;
@@ -811,12 +817,15 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
         UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
         layout.minimumLineSpacing = 10;
         layout.minimumInteritemSpacing = 10;
-        layout.itemSize = CGSizeMake(170, 50);
+//        layout.itemSize = CGSizeMake(170, 50);
+        layout.itemSize = CGSizeMake(170, 100);
         _collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
         _collectionView.delegate = self;
         _collectionView.dataSource = self;
         _collectionView.backgroundColor = [UIColor whiteColor];
-        [_collectionView registerNib:[UINib nibWithNibName:@"ProductLibraryCollectionCell" bundle:nil] forCellWithReuseIdentifier:ProductCollectionCellIdentifier];
+//        [_collectionView registerNib:[UINib nibWithNibName:@"ProductLibraryCollectionCell" bundle:nil] forCellWithReuseIdentifier:ProductCollectionCellIdentifier];
+        
+        [_collectionView registerNib:[UINib nibWithNibName:NSStringFromClass([ProductCollectionCell class]) bundle:nil] forCellWithReuseIdentifier:ProductCollectionCellIdentifier];
     }
     return _collectionView;
 }

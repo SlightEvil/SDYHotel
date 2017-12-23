@@ -7,7 +7,7 @@
 //
 
 #import "SDYRecordVC.h"
-#import "ScrollViewCycle.h"
+
 
 
 @interface SDYRecordVC ()
@@ -26,10 +26,7 @@
     
     self.navigationItem.title = @"我的收藏";
     
-    ScrollViewCycle *scrollView = [[ScrollViewCycle alloc] initWithFrame:CGRectMake(0, 100, kScreenWidth, 100)];
-    scrollView.dataSourceImage = @[@"image",@"image",@"image"];
-    [self.view addSubview:scrollView];
-    [scrollView startAnimation];
+
 
 }
 
@@ -60,22 +57,16 @@
                 row 为detail  ）
      配送订单表： 根据选择的时间表的时间 今天/昨天 显示配送订单的信息 （section为供应商
                 row为 post_detail )
-     
+
      */
     
-    
-    
 }
-
-
-
 
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
 
 
 @end

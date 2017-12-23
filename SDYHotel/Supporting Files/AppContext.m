@@ -112,12 +112,12 @@ single_implementation(AppContext)
         _viewConModelArray = [NSMutableArray array];
         
         NSArray *dataAry = @[
-  @{@"title":@"首页",@"imageName":@"gift",@"selectImageName":@"gift",@"classString":@"SDYHomeVC"},
+  @{@"title":@"首页",@"imageName":@"tabbar_home",@"selectImageName":@"tabbar_home",@"classString":@"SDYHomeVC"},
   @{@"title":@"商品库",@"imageName":@"gift",@"selectImageName":@"gift",@"classString":@"SDYCommodityLibraryVC"},
-  @{@"title":@"收藏记录",@"imageName":@"gift",@"selectImageName":@"gift",@"classString":@"SDYRecordVC"},
-  @{@"title":@"我的订单",@"imageName":@"gift",@"selectImageName":@"gift",@"classString":@"SDYMyOrderVC"},
+  @{@"title":@"收藏记录",@"imageName":@"tabbar_record",@"selectImageName":@"tabbar_record",@"classString":@"SDYRecordVC"},
+  @{@"title":@"我的订单",@"imageName":@"tabbar_myorder",@"selectImageName":@"tabbar_myorder",@"classString":@"SDYMyOrderVC"},
 //  @{@"title":@"财务中心",@"imageName":@"gift",@"selectImageName":@"gift",@"classString":@"SDYMoneyCenterVC"},
-  @{@"title":@"个人中心",@"imageName":@"gift",@"selectImageName":@"gift",@"classString":@"SDYPersonalCenterVC"}
+  @{@"title":@"个人中心",@"imageName":@"tabbar_account",@"selectImageName":@"tabbar_account",@"classString":@"SDYPersonalCenterVC"}
   ];
         
         NSMutableArray *array = [NSMutableArray array];
