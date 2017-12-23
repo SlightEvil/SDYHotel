@@ -41,6 +41,7 @@
 		842E9D6E1FEC913300DC4211 /* MyOrderListOrderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 842E9D6D1FEC913300DC4211 /* MyOrderListOrderCell.m */; };
 		842E9D711FEC9D3600DC4211 /* MyOrderOrderListFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 842E9D701FEC9D3600DC4211 /* MyOrderOrderListFooterView.m */; };
 		842E9D751FECD9EC00DC4211 /* MyOrderListOrderCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 842E9D741FECD9EC00DC4211 /* MyOrderListOrderCell.xib */; };
+		842E9D7C1FED00A800DC4211 /* ScrollViewCycle.m in Sources */ = {isa = PBXBuildFile; fileRef = 842E9D7B1FED00A800DC4211 /* ScrollViewCycle.m */; };
 		845858A91FDCC9DD00ED0B98 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 845858A81FDCC9DD00ED0B98 /* AppDelegate.m */; };
 		845858AF1FDCC9DD00ED0B98 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 845858AD1FDCC9DD00ED0B98 /* Main.storyboard */; };
 		845858B11FDCC9DD00ED0B98 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 845858B01FDCC9DD00ED0B98 /* Assets.xcassets */; };
@@ -129,6 +130,8 @@
 		842E9D6F1FEC9D3600DC4211 /* MyOrderOrderListFooterView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MyOrderOrderListFooterView.h; sourceTree = "<group>"; };
 		842E9D701FEC9D3600DC4211 /* MyOrderOrderListFooterView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyOrderOrderListFooterView.m; sourceTree = "<group>"; };
 		842E9D741FECD9EC00DC4211 /* MyOrderListOrderCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MyOrderListOrderCell.xib; sourceTree = "<group>"; };
+		842E9D7A1FED00A800DC4211 /* ScrollViewCycle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScrollViewCycle.h; sourceTree = "<group>"; };
+		842E9D7B1FED00A800DC4211 /* ScrollViewCycle.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScrollViewCycle.m; sourceTree = "<group>"; };
 		845858A41FDCC9DD00ED0B98 /* SDYHotel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SDYHotel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		845858A71FDCC9DD00ED0B98 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		845858A81FDCC9DD00ED0B98 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -427,6 +430,15 @@
 			path = MyOrderListOrderCell;
 			sourceTree = "<group>";
 		};
+		842E9D761FECFE0000DC4211 /* ScrollView */ = {
+			isa = PBXGroup;
+			children = (
+				842E9D7A1FED00A800DC4211 /* ScrollViewCycle.h */,
+				842E9D7B1FED00A800DC4211 /* ScrollViewCycle.m */,
+			);
+			path = ScrollView;
+			sourceTree = "<group>";
+		};
 		8458589B1FDCC9DD00ED0B98 = {
 			isa = PBXGroup;
 			children = (
@@ -581,6 +593,7 @@
 		848239B81FE8E49500AF19B7 /* CustomView */ = {
 			isa = PBXGroup;
 			children = (
+				842E9D761FECFE0000DC4211 /* ScrollView */,
 				842E9D5B1FE9F48F00DC4211 /* ProductOrderCartTableFootView */,
 				8412E8171FE377BF008335AA /* ProductDetailView */,
 			);
@@ -749,6 +762,7 @@
 				842E9D711FEC9D3600DC4211 /* MyOrderOrderListFooterView.m in Sources */,
 				840E9F491FDCDE7B0027E1E2 /* SDYBaseNavigationVC.m in Sources */,
 				8412E7FC1FE1FBBC008335AA /* ViewModel.m in Sources */,
+				842E9D7C1FED00A800DC4211 /* ScrollViewCycle.m in Sources */,
 				8412E7EE1FE10247008335AA /* LoginUser.m in Sources */,
 				8412E7F11FE1055D008335AA /* NSObject+Category.m in Sources */,
 				8412E80B1FE26538008335AA /* ProductLibraryCollectionCell.m in Sources */,

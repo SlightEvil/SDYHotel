@@ -7,16 +7,12 @@
 //
 
 #import "SDYRecordVC.h"
-
+#import "ScrollViewCycle.h"
 
 
 @interface SDYRecordVC ()
 
-@property (nonatomic, assign) BOOL isAdd;
-
-@property (nonatomic) UIView *addView;
-
-@property (nonatomic) UIButton *blackView;
+@property (nonatomic, assign) BOOL firstCLick;
 
 
 
@@ -29,10 +25,11 @@
     [super viewDidLoad];
     
     self.navigationItem.title = @"我的收藏";
-  
-    CGRect frame = self.addView.frame;
-    frame.origin.y = kScreenHeight;
-    self.addView.frame = frame;
+    
+    ScrollViewCycle *scrollView = [[ScrollViewCycle alloc] initWithFrame:CGRectMake(0, 100, kScreenWidth, 100)];
+    scrollView.dataSourceImage = @[@"image",@"image",@"image"];
+    [self.view addSubview:scrollView];
+    [scrollView startAnimation];
 
 }
 

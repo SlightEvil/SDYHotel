@@ -8,7 +8,13 @@
 
 #import "SDYPersonalCenterVC.h"
 
-@interface SDYPersonalCenterVC ()
+@interface SDYPersonalCenterVC ()<UITableViewDelegate,UITableViewDataSource>
+
+
+//@property (nonatomic) UIButton *
+
+@property (nonatomic) UITableView *tableView;
+
 
 @end
 
@@ -17,7 +23,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.navigationItem.title = @"个人中心";
-    // Do any additional setup after loading the view.
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -36,6 +42,18 @@
         [APPCT showLoginViewCon];
     } 
 }
+
+
+#pragma mark - Delegate
+
+#pragma mark - UITableViewDelegate
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 49;
+}
+
+
 
 
 

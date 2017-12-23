@@ -50,17 +50,22 @@
 
 - (void)downOrderBtnClick
 {
-    [self alertIsDevelopment];
+//    [self alertIsDevelopment];
+    
+    
+    self.tabBarController.selectedIndex = 1;
 }
 
 - (void)lookOrderBtnClick
 {
-     [self alertIsDevelopment];
+//     [self alertIsDevelopment];
+    self.tabBarController.selectedIndex = 3;
 }
 
 - (void)confireCommodityBtnClick
 {
-     [self alertIsDevelopment];
+//     [self alertIsDevelopment];
+    self.tabBarController.selectedIndex = 3;
 }
 
 - (void)alertIsDevelopment
