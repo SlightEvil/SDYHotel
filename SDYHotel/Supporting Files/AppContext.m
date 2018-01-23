@@ -17,11 +17,6 @@
 
 @property (nonatomic) UIWindow *topWindow;
 
-@property (nonatomic) UIActivityIndicatorView *activity;
-
-
-
-
 @end
 
 @implementation AppContext
@@ -35,7 +30,7 @@ single_implementation(AppContext)
 {
     [self.topWindow makeKeyAndVisible];
 }
-
+#pragma mark - 登录
 - (void)showLoginViewCon
 {
     SDYBaseVC*viewCon = [NSClassFromString(@"SDYLoginVC") new];
@@ -47,24 +42,17 @@ single_implementation(AppContext)
     [[UIApplication sharedApplication] setStatusBarHidden:hidden];
 }
 
-- (void)showActivity
+
+#pragma mark - NSUserDefaults
+- (void)userDefaultSave:(id)value forKey:(NSString *)key
 {
-    [[UIApplication sharedApplication].keyWindow addSubview:self.activity];
-    self.activity.center = [UIApplication sharedApplication].keyWindow.center;
-    [self.activity startAnimating];
-    
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    [[NSUserDefaults standardUserDefaults] setObject:value forKey:key];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
-
-- (void)hiddenActivity
+- (id)userDefaultVlaueForKey:(NSString *)key
 {
-    [self.activity stopAnimating];
-    [self.activity removeFromSuperview];
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+    return [[NSUserDefaults standardUserDefaults] valueForKey:key];
 }
-
-
-
 
 - (UIViewController *)topViewController
 {
@@ -82,13 +70,22 @@ single_implementation(AppContext)
 }
 
 
+/** 替换 Null 为 “” */
+- (NSData *)jsonReplaceNull:(NSData *)data
+{
+    NSString *jsonString = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
+    jsonString =  [jsonString stringByReplacingOccurrencesOfString:@"null" withString:@"\"\""];
+    return [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+}
+
+
 #pragma mark - Getter and Setter
 
 - (UIWindow *)topWindow
 {
     if (!_topWindow) {
         _topWindow = [[UIWindow alloc] initWithFrame:CGRectZero];
-        _topWindow.backgroundColor = SDYTitleViewColor;
+        _topWindow.backgroundColor = kSDYTitleViewColor;
         [_topWindow addSubview:self.titleView];
         _topWindow.frame = CGRectMake(0, 20, kScreenWidth, 44);
         _topWindow.rootViewController = [UIViewController new];
@@ -113,7 +110,7 @@ single_implementation(AppContext)
         
         NSArray *dataAry = @[
   @{@"title":@"首页",@"imageName":@"tabbar_home",@"selectImageName":@"tabbar_home",@"classString":@"SDYHomeVC"},
-  @{@"title":@"商品库",@"imageName":@"gift",@"selectImageName":@"gift",@"classString":@"SDYCommodityLibraryVC"},
+  @{@"title":@"商品库",@"imageName":@"tabbar_library",@"selectImageName":@"gift",@"classString":@"SDYCommodityLibraryVC"},
   @{@"title":@"收藏记录",@"imageName":@"tabbar_record",@"selectImageName":@"tabbar_record",@"classString":@"SDYRecordVC"},
   @{@"title":@"我的订单",@"imageName":@"tabbar_myorder",@"selectImageName":@"tabbar_myorder",@"classString":@"SDYMyOrderVC"},
 //  @{@"title":@"财务中心",@"imageName":@"gift",@"selectImageName":@"gift",@"classString":@"SDYMoneyCenterVC"},
@@ -146,15 +143,6 @@ single_implementation(AppContext)
         _viewModel = [[ViewModel alloc]init];
     }
     return _viewModel;
-}
-
-- (UIActivityIndicatorView *)activity
-{
-    if (!_activity) {
-        _activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-        _activity.hidesWhenStopped = YES;
-    }
-    return _activity;
 }
 
 @end

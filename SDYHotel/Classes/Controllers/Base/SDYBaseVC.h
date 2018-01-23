@@ -12,6 +12,7 @@
 #import "Masonry.h"
 #import "UIView+Category.h"
 #import "UIImage+Category.h"
+#import "UITextField+Category.h"
 
 @interface SDYBaseVC : UIViewController
 

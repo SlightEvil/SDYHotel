@@ -14,8 +14,6 @@
 @property (nonatomic) MyOrderOrderDetailModel *orderDetailModel;
 
 
-
-
 @property (weak, nonatomic) IBOutlet UILabel *productNameLabel;
 
 @property (weak, nonatomic) IBOutlet UILabel *numberUnitLabel;

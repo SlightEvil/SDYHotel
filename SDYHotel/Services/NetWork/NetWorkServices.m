@@ -8,6 +8,7 @@
 
 #import "NetWorkServices.h"
 #import <AFNetworking.h>
+#import <SVProgressHUD/SVProgressHUD.h>
 
 
 @interface NetWorkServices ()
@@ -23,38 +24,60 @@
 
 - (void)GET:(NSString *)urlString parameters:(id)parameters success:(SuccessBlock)successBlock faile:(FailBlock)failBlock
 {
-    [self.manager GET:urlString parameters:parameters progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        
-        if (responseObject) {
-            NSError *error;
-            NSDictionary *dataDic = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:&error];
-            successBlock(dataDic,error.localizedDescription);
-        } else {
-            successBlock(nil,@"暂无数据");
-        }
+    NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:parameters];
+    
+    if (APPCT.loginUser.user_id && APPCT.loginUser.token) {
+        [dic setObject:APPCT.loginUser.user_id forKey:@"uid"];
+        [dic setObject:APPCT.loginUser.token forKey:@"token"];
+    }
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    });
+    
+    [self.manager GET:urlString parameters:dic progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+
+        successBlock(responseObject);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        });
+      
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         failBlock(error.localizedDescription);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        });
     }];
 }
 
-
 - (void)POST:(NSString *)urlString parameters:(NSDictionary *)parameters success:(SuccessBlock)successBlock fail:(FailBlock)failBlock
 {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    });
     [self.manager POST:urlString parameters:parameters progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        if (responseObject) {
-            NSError *error;
-            NSDictionary *dataDic = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:&error];
-            successBlock(dataDic,error.localizedDescription);
-        } else {
-            successBlock(nil,@"暂无数据");
-        }
+        successBlock(responseObject);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        });
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if (failBlock) {
             failBlock(error.localizedDescription);
         }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        });
     }];
 }
 
+
+///** 替换 Null 为 “” */
+//- (NSData *)jsonReplaceNull:(NSData *)data
+//{
+//    NSString *jsonString = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
+//    jsonString =  [jsonString stringByReplacingOccurrencesOfString:@"null" withString:@"\"\""];
+//    return [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+//}
 
 
 #pragma mark -  
@@ -64,9 +87,16 @@
     if (!_manager) {
         _manager = [AFHTTPSessionManager manager];
         _manager.requestSerializer = [AFHTTPRequestSerializer serializer];
-        _manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-//     _manager.requestSerializer = [AFJSONRequestSerializer serializer]; //上传json 格式
-//     _manager.responseSerializer = [AFJSONResponseSerializer serializer]; //AFN json 解析返回的数据
+// 上传json格式
+//     _manager.requestSerializer = [AFJSONRequestSerializer serializer];
+
+        
+//        _manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+//AFN json 解析返回的数据  (back dictionary)
+        _manager.responseSerializer = [AFJSONResponseSerializer serializer];
+        
+        //设置返回类型
+//        _manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
     }
     return _manager;
 }
@@ -79,6 +109,8 @@
     }
     return _reachableManager;
 }
+
+
 
 /*
 AFNetworkReachabilityManager *manager = [AFNetworkReachabilityManager sharedManager];

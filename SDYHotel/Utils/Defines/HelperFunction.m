@@ -6,7 +6,7 @@
 //  Copyright © 2017年 SanDaoYi. All rights reserved.
 //
 
-//#import <Foundation/Foundation.h>
+#import <Foundation/Foundation.h>
 
 #pragma mark - GCD
 //inline
@@ -56,7 +56,6 @@ void swapInstanceMethodImplementation(id object, SEL originalSelector, SEL newSe
 void swapClassMethodImplementation(id object, SEL originalSelector, SEL newSelector) {
     __swizzleMethodImplementations(object_getClass(object), originalSelector, newSelector);
 }
-
 
 
 

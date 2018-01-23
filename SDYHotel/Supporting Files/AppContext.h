@@ -38,22 +38,6 @@ single_interface(AppContext)
 @property (nonatomic) BOOL isLogin;
 //产品数组
 @property (nonatomic) ViewModel *viewModel;
-//产品详情  里面包含多个product detail 的model
-@property (nonatomic) ProductDetailModel *productDetailModel;
-
-
-
-
-
-/**
-显示加载
- */
-- (void)showActivity;
-
-/**
- 隐藏加载
- */
-- (void)hiddenActivity;
 
 /**
  显示表头
@@ -72,8 +56,14 @@ single_interface(AppContext)
  */
 - (void)statusBarHidden:(BOOL)hidden;
 
+/** NSUserDefault 存数据 set value for key */
+- (void)userDefaultSave:(id)value forKey:(NSString *)key;
+/** NSUserDefault 取数据for key */
+- (id)userDefaultVlaueForKey:(NSString *)key;
 
 
+/** 把data里面的null  替换成“” */
+- (NSData *)jsonReplaceNull:(NSData *)data;
 
 
 @end

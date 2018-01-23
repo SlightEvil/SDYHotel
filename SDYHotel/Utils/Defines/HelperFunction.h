@@ -36,5 +36,4 @@ void swapInstanceMethodImplementation(id object, SEL originalSelector, SEL newSe
 void swapClassMethodImplementation(id object, SEL originalSelector, SEL newSelector);
 
 
-
 #endif /* HelperFunction_h */

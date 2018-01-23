@@ -8,28 +8,6 @@
 
 #import "MyOrderOrderListModel.h"
 
-//@implementation MyOrderOrderListTimeModel
-//
-//- (NSMutableArray *)orderListArray
-//{
-//    if (!_orderListArray) {
-//        _orderListArray = [NSMutableArray array];
-//    }
-//    return _orderListArray;
-//}
-//
-//- (void)setOrderListArray:(NSMutableArray *)orderListArray
-//{
-//    NSMutableArray *array= [NSMutableArray array];
-//    [orderListArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-//        MyOrderOrderListModel *listOrderModel = [MyOrderOrderListModel cz_objWithDict:obj];
-//        [array addObject:listOrderModel];
-//    }];
-//    _orderListArray = array.copy;
-//}
-//
-//@end
-
 
 @implementation MyOrderOrderListModel
 

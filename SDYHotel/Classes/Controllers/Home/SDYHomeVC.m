@@ -41,7 +41,11 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
-
+    [super viewWillAppear:animated];
+    
+    if (APPCT.isLogin) {
+        self.navigationItem.title = [NSString stringWithFormat:@"%@ - 三道易平台",APPCT.loginUser.user_name];
+    }
 }
 
 #pragma mark - Delegate
@@ -58,14 +62,13 @@
 
 - (void)lookOrderBtnClick
 {
-//     [self alertIsDevelopment];
     self.tabBarController.selectedIndex = 3;
 }
 
 - (void)confireCommodityBtnClick
 {
-//     [self alertIsDevelopment];
     self.tabBarController.selectedIndex = 3;
+    Post_Observer(SDYMyOrderOrderWaitingForReceiveNotification, nil, nil);
 }
 
 - (void)alertIsDevelopment

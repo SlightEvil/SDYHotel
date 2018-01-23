@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class ProductModle;
+@class ProductDetailProductModel;
 @class ProductCategoryModel;
 
 
@@ -23,7 +23,7 @@
 /**
  产品数组
  */
-@property (nonatomic) NSMutableArray <ProductModle *>*productsAry;
+@property (nonatomic) NSMutableArray <ProductDetailProductModel *>*productsAry;
 
 
 @end

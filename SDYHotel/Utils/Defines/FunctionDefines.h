@@ -14,25 +14,31 @@
  tableView Tag 商品库的tag
 
  */
-#define tableViewTagCommodityLibraryProductCategory     15001
-#define tableViewTagCommodityLibraryProductClass        15002
-#define tableViewTagCommodityLibraryProductOrder        15003
+#define tableViewTagCommodityLibraryProductCategory             15001
+#define tableViewTagCommodityLibraryProductClass                15002
+#define tableViewTagCommodityLibraryProductOrder                15003
 
 /**
  我的订单
  */
-#define tableViewTagMyOrderOrderList                    15004
-#define tableViewTagMyOrderAdvanceOrder                 15005
-#define tableViewTagMyOrderPostOrder                  15006
+#define tableViewTagMyOrderOrderList                            15004
+#define tableViewTagMyOrderAdvanceOrder                         15005
+#define tableViewTagMyOrderPostOrder                            15006
 
+/**
+ 商品详情
+ */
+#define tableViewTagCommodityLibraryProductDetailAttribute      15007
+#define tableViewTagCommodityLibraryProductDetailShop           15008
 
 #define buttonTagCommodityLibraryProductDetailViewGrade     20000
 #define buttonTagCommodityLibraryProductDetailViewUnit      20010
-//#define tableViewTag
-//#define tableViewTag
-//#define tableViewTag
 
 
+#define kIsIphone [[UIDevice currentDevice].model isEqualToString:@"iPhone"]
+
+#define kCellFont   (kIsIphone ? 15 : 17)
+#define kIconWidth  (kIsIphone ? 70 : 90)
 
 #pragma mark - Notification
 
@@ -49,8 +55,13 @@
 
 #pragma mark - Color
 
-#define SDYTitleViewColor               kUIColorFromRGB(0xf8f8f8)
-#define SDYTabbarBarTintColor           kUIColorFromRGB(0xf8f8f8)
+#define kSDYTitleViewColor               [UIColor colorWithRed:(248/255.0) green:(248/255.0) blue:(248/255.0) alpha:1]
+#define kSDYTabbarBarTintColor           [UIColor colorWithRed:(248/255.0) green:(248/255.0) blue:(248/255.0) alpha:1]
+#define kSDYBgViewColor                  [UIColor colorWithRed:(240/255.0) green:(240/255.0) blue:(240/255.0) alpha:1]
+#define kSDYColorGreen                   [UIColor colorWithRed:(6/255.0) green:(206/255.0) blue:(138/255.0) alpha:1]
+#define kSDYAttributeSelectColor         [UIColor colorWithRed:(244/255.0) green:(164/255.0) blue:(96/255.0) alpha:1]
+
+#define kSDYSelectColor                  [UIColor whiteColor]
 
 #define kUIColorFromRGB(rgbValue) [UIColor \
 colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 \

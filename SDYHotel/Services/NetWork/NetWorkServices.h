@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-typedef void(^SuccessBlock)(NSDictionary *data,NSString *errorDescription);
+typedef void(^SuccessBlock)(NSDictionary *dictionary);
 typedef void(^FailBlock)(NSString *errorDescription);
 
 

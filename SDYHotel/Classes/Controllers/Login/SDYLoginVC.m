@@ -10,7 +10,7 @@
 #import "SDYTextField.h"
 
 
-CGFloat textFieldHeight = 60;
+CGFloat textFieldHeight = 50;
 
 
 @interface SDYLoginVC ()
@@ -25,6 +25,10 @@ CGFloat textFieldHeight = 60;
 @end
 
 @implementation SDYLoginVC
+{
+    CGFloat _width;
+    CGFloat _height;
+}
 
 #pragma mark - lifecycle
 
@@ -38,11 +42,17 @@ CGFloat textFieldHeight = 60;
     [self.view addSubview:self.loginBtn];
     [self.view addSubview:self.cancelBtn];
     
-    
     [self layoutWithAuto];
 }
 
-
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    if ([APPCT userDefaultVlaueForKey:UDKUserName]) {
+        self.userNameTextField.text = [APPCT userDefaultVlaueForKey:UDKUserName];
+    }
+}
 
 #pragma mark - event response
 
@@ -55,42 +65,40 @@ CGFloat textFieldHeight = 60;
 {
     [self.view endEditing:YES];
     
-    [APPCT showActivity];
     
     NSString *user = self.userNameTextField.text;
     NSString *passWord = self.passWorkTextField.text;
     
     if (user.length == 0 || passWord.length == 0) {
-        
-        [self alertTitle:@"账户或者密码不能为空" message:nil complete:nil];
+        [SVProgressHUD showWithStatus:@"账户或者密码不能为空"];
+        [SVProgressHUD dismissWithDelay:1.0];
         return;
     }
     
     __weak typeof(self)WeakSelf = self;
+    __strong typeof(WeakSelf)strongSelf = WeakSelf;
+    [APPCT.netWorkService POST:kAPIURLShopLogin parameters:@{user_name:user,user_password:passWord} success:^(NSDictionary *dictionary) {
     
-    [[AppContext sharedAppContext].netWorkService POST:kSDYNetWorkShopLoginUrl parameters:@{user_name:user,user_password:passWord} success:^(NSDictionary *data, NSString *errorDescription) {
-        
-        __strong typeof(WeakSelf)strongSelf = WeakSelf;
-
-        NSInteger  requestState =   [data[status] integerValue];
-        NSString *messageValue = data[message];
+        NSInteger  requestState =   [dictionary[status] integerValue];
+        NSString *messageValue = dictionary[message];
         
         if (requestState != 0) {
-            [strongSelf alertTitle:@"登录失败" message:messageValue complete:nil];
-            [APPCT hiddenActivity];
+            [SVProgressHUD showErrorWithStatus:messageValue];
+            [SVProgressHUD dismissWithDelay:1.0];
             return;
         }
         
-        NSDictionary *dic = data[@"data"];
+        NSDictionary *dic = dictionary[@"data"];
         
         APPCT.loginUser = [LoginUser cz_objWithDict:dic];
         APPCT.isLogin = YES;
+        [APPCT userDefaultSave:APPCT.loginUser.user_name forKey:UDKUserName];
+
         [strongSelf dismissViewControllerAnimated:YES completion:nil];
-        [APPCT hiddenActivity];
-    
+     
     } fail:^(NSString *errorDescription) {
-        [WeakSelf alertTitle:@"登录失败" message:errorDescription complete:nil];
-        [APPCT hiddenActivity];
+        [SVProgressHUD showErrorWithStatus:errorDescription];
+        [SVProgressHUD dismissWithDelay:1.0];
     }];
 }
 
@@ -105,8 +113,8 @@ CGFloat textFieldHeight = 60;
 - (void)layoutWithAuto
 {
     [self.loginBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.equalTo(self.view);
-        make.centerY.mas_equalTo(self.view.mas_centerY).mas_offset(-50);
+        make.centerX.mas_equalTo(self.view.mas_centerX);
+        make.centerY.mas_equalTo(self.view.mas_centerY);
         make.width.mas_equalTo(self.view.width/2);
         make.height.mas_equalTo(textFieldHeight);
     }];
@@ -114,11 +122,11 @@ CGFloat textFieldHeight = 60;
         make.centerX.equalTo(self.view);
         make.width.mas_equalTo(self.view.width/2);
         make.height.mas_equalTo(textFieldHeight);
-        make.bottom.mas_equalTo(self.loginBtn.mas_top).mas_offset(-20);
+        make.bottom.mas_equalTo(self.loginBtn.mas_top).mas_offset(-10);
     }];
     [self.userNameTextField mas_makeConstraints:^(MASConstraintMaker *make) {
         make.width.height.centerX.equalTo(self.passWorkTextField);
-        make.bottom.mas_equalTo(self.passWorkTextField.mas_top).mas_offset(-20);
+        make.bottom.mas_equalTo(self.passWorkTextField.mas_top).mas_offset(-10);
     }];
     [self.cancelBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.view).mas_offset(60);

@@ -8,8 +8,8 @@
 
 #import "SDYTextField.h"
 
-CGFloat leftViewWidth = 45;
-CGFloat leftViewHeight = 45;
+CGFloat leftViewWidth = 40;
+CGFloat leftViewHeight = 40;
 
 @implementation SDYTextField
 
@@ -35,6 +35,7 @@ CGFloat leftViewHeight = 45;
 //leftView像右偏移
 - (CGRect)leftViewRectForBounds:(CGRect)bounds
 {
+
     CGRect iconRect = [super leftViewRectForBounds:bounds];
     iconRect.origin.x += 20;
     return iconRect;

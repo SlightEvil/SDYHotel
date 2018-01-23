@@ -18,6 +18,7 @@
 
     #import "HeaderDefines.h"
     #import "AppContext.h"
+    #import <SVProgressHUD/SVProgressHUD.h>
 
 #endif
 

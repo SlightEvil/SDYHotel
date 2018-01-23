@@ -34,7 +34,7 @@
 
 @end
 
-
+/** 商品订单的model */
 @interface ProductOrderModel : NSObject
 
 //供应商ID
@@ -51,7 +51,7 @@
 @property (nonatomic) NSString *totalPrice;
 //备注
 @property (nonatomic) NSString *content;
-//详细
+//详细  各种商品
 @property (nonatomic) NSMutableArray *details;
 
 
@@ -80,10 +80,9 @@
 #pragma mark - 购物车
 
 /**
- 购物车
+ 购物车 商品库购物车模型
  */
 @interface ProductShopCartModel : NSObject
-
 
 //商品名称
 @property (nonatomic) NSString *productName;
@@ -91,7 +90,6 @@
 @property (nonatomic) NSString *shopName;
 //总价
 @property (nonatomic,readonly) NSString *toalPrice;
-
 //数量
 @property (nonatomic, assign) int number;
 //单价
@@ -101,9 +99,9 @@
 //属相  eg 级别，单价
 @property (nonatomic ) NSString *attributes;
 
-//是否为第一行
-@property (nonatomic, assign) BOOL isSection;
 
+/** 同一家商店的商品 数组 ProductDetailSkusModel  */
+//@property (nonatomic) NSMutableArray *detailArray;
 /**
  单品数据
  */
@@ -114,9 +112,5 @@
  */
 @property (nonatomic) ProductDetailShopModel *shopModel;
 
-///**
-// 提交订单的时候，保存 相同商品相同商家的 商品
-// */
-//@property (nonatomic) NSMutableArray *detailArray;
 
 @end

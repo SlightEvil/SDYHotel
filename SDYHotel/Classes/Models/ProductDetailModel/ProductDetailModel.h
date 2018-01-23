@@ -28,6 +28,9 @@ FOUNDATION_EXPORT NSString *const ProductDetailProductKey;
 
 #pragma mark - 一个.h 文件中创建多个 @interface ，需要在.m 文件中 创建多个@implementation
 
+static NSString *const attributesNameKey = @"attribute_name";
+static NSString *const attributesIdKey = @"attribute_id";
+
 // 产品规格信息
 @interface ProductDetailAttributesModel : NSObject
 
@@ -46,8 +49,6 @@ FOUNDATION_EXPORT NSString *const ProductDetailProductKey;
 @property (nonatomic) NSString *show_sales;
 //级别
 @property (nonatomic) NSMutableArray *attributes;
-
-
 
 @end
 
@@ -119,11 +120,11 @@ FOUNDATION_EXPORT NSString *const ProductDetailProductKey;
 //@[ @{ } ]
 @interface ProductDetailSkusModel : NSObject
 
-//单品id
+/** 单品id */
 @property (nonatomic) NSString *sku_id;
-//产品ID
+/** 产品ID */
 @property (nonatomic) NSString *product_id;
-//商场价格
+/** 商场价格 */
 @property (nonatomic) NSString *mall_price;
 //销售
 @property (nonatomic) NSString *sales;
@@ -135,10 +136,15 @@ FOUNDATION_EXPORT NSString *const ProductDetailProductKey;
 @property (nonatomic) NSString *stock;
 //属性
 @property (nonatomic) NSString *attributes;
+/** 规格名称 */
+@property (nonatomic) NSString *attribute_names;
+
 //显示销售
 @property (nonatomic) NSString *show_sales;
 //产品名字
 @property (nonatomic) NSString *product_name;
+/** 规格的数组 用来根据规格数字显示规格 */
+@property (nonatomic) NSArray *attributeArray;
 
 @end
 

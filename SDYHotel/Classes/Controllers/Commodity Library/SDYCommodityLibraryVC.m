@@ -7,20 +7,25 @@
 //
 
 #import "SDYCommodityLibraryVC.h"
-#import "ProductModle.h"
+
 #import "ProductCategoryModel.h"
 #import "ProductDetailModel.h"
 #import "ProductShopCartModel.h"
+#import "SDYBaseNavigationVC.h"
 
-#import "ProductLibraryCollectionCell.h"
 #import "ProductLibraryOrderCell.h"
 
 #import "ProductCollectionCell.h"
+#import "SDYHistoryRecordCell.h"//
 
 
-#import "ProductDetailView.h"
+
 #import "ProductOrderCartTableFootView.h"
+#import "SDYCommodityLibraryOrderHeader.h"
 
+#import "SDYSearchProductVC.h"
+
+#import "SDYCommodityLibraryProductDetailView.h"
 
 
 static NSString *const CategoryTableViewCellIdentifier = @"CommodityLibraryCatagoryTableViewCellIdentifier";
@@ -28,8 +33,11 @@ static NSString *const ClassTableViewCellIdentifier = @"CommodityLibraryClassTab
 static NSString *const ProductCollectionCellIdentifier = @"CommodityLibraryProductCollectionCellIdentifier";
 static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTableViewCellIdentifier";
 
+static NSString *const OrderTableViewFooterIdentifier = @"CommodityLibraryOrderTableViewFooterIdentifier";
+static NSString *const OrderTableViewHeaderIdentifier = @"CommodityLibraryOrderTableViewHeaderIdentifier";
 
-@interface SDYCommodityLibraryVC ()<UITableViewDelegate,UITableViewDataSource,UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout,ProductDetailViewDelegate,ProductOrderCartTableFootViewDelegate>
+
+@interface SDYCommodityLibraryVC ()<UITableViewDelegate,UITableViewDataSource,UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout,SDYCommodityLibraryProductDetailViewDelegate,UISearchBarDelegate>
 
 
 /**
@@ -51,7 +59,10 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
 /**
  从下面弹出商品详情
  */
-@property (nonatomic) ProductDetailView *detailView;
+//@property (nonatomic) ProductDetailView *detailView;
+
+/** 显示商品详情的 */
+@property (nonatomic) SDYCommodityLibraryProductDetailView *secondDetailView;
 
 /**
  购物车 下面备注和下单
@@ -62,11 +73,6 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
  商品详情的黑色背景
  */
 @property (nonatomic) UIButton *blackView;
-
-/**
- 购物车下面的 备注  下单
- */
-@property (nonatomic) ProductOrderCartTableFootView *orderCartFootView;
 
 /**
  是否刷新collectionView
@@ -83,25 +89,41 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
  */
 @property (nonatomic) NSMutableArray *productOrderArray;
 
+@property (nonatomic) UISearchBar *searchBar;
+
+
+
+
 @end
 
 @implementation SDYCommodityLibraryVC
+{
+    CGFloat _width;
+    CGFloat _height;
+    
+}
 
 #pragma mark - lifecycle
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
-    self.navigationItem.title = @"商品库";
+    
+    _width = self.view.bounds.size.width;
+    _height = self.view.bounds.size.height;
+    self.productOrderArray = [NSMutableArray array];
+    self.view.backgroundColor = [UIColor grayColor];
+    
+    [self setNavigatonBar];
     
     [self.view addSubview:self.categoryTableView];
     [self.view addSubview:self.classTableView];
     [self.view addSubview:self.collectionView];
     [self.view addSubview:self.orderTableView];
-    [self.view addSubview:self.orderCartFootView];
-    
-    [self layoutWithAuto];
 
+    [self layoutWithAuto];
+    
+    Add_Observer(SDYMyRecordSelectProductNotification, @selector(notificationMyRecordSelectProduct:));
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -114,8 +136,37 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
     }
 }
 
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+}
 
-#pragma mark - Delegate
+
+#pragma mark - Event response  相应事件
+
+/** 已废弃 */
+- (void)searchBtnClick
+{
+    SDYSearchProductVC *searVC = [[SDYSearchProductVC alloc] init];
+    searVC.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:searVC animated:NO];
+}
+/** 在iPad titleView为UISearchBar 取消按钮不显示 */
+- (void)rightItemButtonCancelClick
+{
+    [self.searchBar resignFirstResponder];
+}
+/** 从我的收藏点击商品 跳转到商品库来添加商品 */
+- (void)notificationMyRecordSelectProduct:(NSNotification *)notification
+{
+    NSDictionary *dic = [notification userInfo];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+         [self requestProductDetailWithProductID:dic[@"product_id"]];
+    });
+}
+
+#pragma mark - Delegate 代理方法
 
 #pragma mark - UITalbeViewDelegate
 //UITableViewDelegate
@@ -129,22 +180,76 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
     return 50;
 }
 
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
+    if (tableView.tag == tableViewTagCommodityLibraryProductOrder) {
+        return 150;
+    }
+    return 0;
+}
+
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     if (tableView.tag == tableViewTagCommodityLibraryProductCategory) {
-        return @"全部分类";
+        return [self setupTableSectionHeaderLabelText:@"全部分类"];
     }
     if (tableView.tag == tableViewTagCommodityLibraryProductClass) {
-        return @"分类描述";
+        return [self setupTableSectionHeaderLabelText:@"分类描述"];
     }
+
     if (tableView.tag == tableViewTagCommodityLibraryProductOrder) {
-        return @"订单";
+        
+        SDYCommodityLibraryOrderHeader *header = [tableView dequeueReusableHeaderFooterViewWithIdentifier:OrderTableViewHeaderIdentifier];
+        header.titlesAry = @[@"商品名",@"规格",@"数量*单价",@"小计"];
+        return header;
     }
     return nil;
 }
 
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+{
+    if (tableView.tag == tableViewTagCommodityLibraryProductOrder) {
+        
+        __weak typeof(self)weakSelf = self;
+        __strong typeof(weakSelf)strongSelf = weakSelf;
+        
+        ProductOrderCartTableFootView *footerView = [tableView dequeueReusableHeaderFooterViewWithIdentifier:OrderTableViewFooterIdentifier];
+        footerView.downOrderButtonClick = ^(NSString *remark) {
+            
+            if (!APPCT.isLogin) {
+                [APPCT showLoginViewCon];
+                return;
+            }
+            
+            if (strongSelf.productOrderArray.count == 0) {
+                [SVProgressHUD showErrorWithStatus:@"请先选择商品"];
+                [SVProgressHUD dismissWithDelay:1.0];
+                return;
+            }
+            
+            NSArray *cartAry = [strongSelf arrayElementApppend:strongSelf.productOrderArray.copy remark:remark];
+            NSString *content = [strongSelf placeOrderPushServiceContentProductOrderModelAry:cartAry];
+            
+            //    NSLog(@"请求数据 = %@",content);
+            //下单
+            [strongSelf requestAddNewOrderWithContent:content];
+        };
+        
+        return footerView;
+    }
+    UIView *footViewClear = [[UIView alloc] initWithFrame:CGRectZero];
+    footViewClear.backgroundColor = [UIColor clearColor];
+    return footViewClear;
+}
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [self.view endEditing:YES];
+    if (APPCT.viewModel.productCategorysAry.count == 0) {
+        return;
+    }
+    
     if (tableView.tag == tableViewTagCommodityLibraryProductCategory) {
         self.selectCellIndex = indexPath.row;
         [self.classTableView reloadData];
@@ -158,9 +263,7 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
     
         [self requestProductWithCat:cellModel.category_id name:nil page:nil line:nil];
     }
-    if (tableView.tag == tableViewTagCommodityLibraryProductOrder) {
-//        啥也不做
-    }
+    //类似购物车表 没有点击事件
 }
 
 #pragma mark - UITableViewDataSource
@@ -187,34 +290,41 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
     if (tableView.tag == tableViewTagCommodityLibraryProductCategory) {
         
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CategoryTableViewCellIdentifier forIndexPath:indexPath];
+        //基本cell的设置
+         [self setupTableCell:cell];
+        
         ProductCategoryModel *sectionModel = APPCT.viewModel.productCategorysAry[indexPath.row];
         cell.textLabel.text = sectionModel.category_name;
-        cell.textLabel.adjustsFontSizeToFitWidth = YES;
-        cell.selectedBackgroundView = [self cellSelectViewWithSize:cell.bounds.size];
         return cell;
     }
     
     if (tableView.tag == tableViewTagCommodityLibraryProductClass) {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:ClassTableViewCellIdentifier forIndexPath:indexPath];
-        
+        //基本cell的设置
+        [self setupTableCell:cell];
         if (APPCT.viewModel.productCategorysAry.count > 0) {
             ProductCategoryModel *sectionModel = APPCT.viewModel.productCategorysAry[self.selectCellIndex];
             ProductCategoryModel *cellModel = sectionModel.children[indexPath.row];
             cell.textLabel.text = cellModel.category_name;
-            cell.textLabel.adjustsFontSizeToFitWidth = YES;
-            cell.selectedBackgroundView = [self cellSelectViewWithSize:cell.bounds.size];
         }
         return cell;
     }
     if (tableView.tag == tableViewTagCommodityLibraryProductOrder) {
+        
         ProductLibraryOrderCell *cell = [tableView dequeueReusableCellWithIdentifier:OrderTableViewCellIdentifier forIndexPath:indexPath];
         __weak typeof(self)weakSelf = self;
+        __strong typeof(weakSelf)strongSelf = weakSelf;
         cell.shopCartModel = self.productOrderArray[indexPath.row];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;;
         [cell cellDeleteBtnClick:^{
-            __strong typeof(weakSelf)strongSelf = weakSelf;
-            [strongSelf.productOrderArray removeObjectAtIndex:indexPath.row];
-            [strongSelf.orderTableView reloadData];
+            
+            [strongSelf alertTitle:@"确认删除" message:nil complete:^{
+                /** 重新赋值为了setter 方法的执行 */
+                NSMutableArray *ary = strongSelf.productOrderArray;
+                [ary removeObjectAtIndex:indexPath.row];
+                strongSelf.productOrderArray = ary;
+                [strongSelf.orderTableView reloadData];
+            }];
         }];
         return cell;
     }
@@ -224,13 +334,13 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
 #pragma mark - UICollectionViewDelegate
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    ProductModle *model = APPCT.viewModel.productsAry[indexPath.row];
+    [self.view endEditing:YES];
+    [self.navigationController.navigationBar endEditing:YES];
+    
+    ProductDetailProductModel *model = APPCT.viewModel.productsAry[indexPath.row];
     [self requestProductDetailWithProductID:model.product_id];
-#pragma mark - 测试  完成之后使用上面
-   
-//    [self requestProductDetailWithProductID:@"531"];
-}
 
+}
 
 #pragma mark - UICollectionViewDataSource
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
@@ -240,28 +350,38 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-//    ProductLibraryCollectionCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:ProductCollectionCellIdentifier forIndexPath:indexPath];
-//
-//    ProductModle *model = APPCT.viewModel.productsAry[indexPath.row];
-//    cell.title.text = model.product_name;
+
+    SDYHistoryRecordCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:ProductCollectionCellIdentifier forIndexPath:indexPath];
     
-    ProductCollectionCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:ProductCollectionCellIdentifier forIndexPath:indexPath];
-    ProductModle *model = APPCT.viewModel.productsAry[indexPath.row];
-    cell.productModel = model;
-    
-    UIView *selectView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, cell.bounds.size.width, cell.bounds.size.height)];
-    selectView.backgroundColor = kUIColorFromRGB(0x06ce8a);
-    cell.selectedBackgroundView = selectView;
-    
+    ProductDetailProductModel *model = APPCT.viewModel.productsAry[indexPath.row];
+    cell.title.text = model.product_name;
     return cell;
 }
 
-#pragma mark - UICollectionViewDelegateFlowLayout
 
-- (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section
+#pragma mark - UISearchBarDelegate
+
+- (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar
 {
-    return UIEdgeInsetsMake(10, 10, 10, 10);
+    return YES;
 }
+
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
+{
+    
+}
+
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar
+{
+    [self rightItemButtonCancelClick];
+}
+
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
+{
+    [searchBar resignFirstResponder];
+    [self requestProductWithCat:nil name:searchBar.text page:nil line:nil];
+}
+
 
 #pragma mark - ProductDetailViewDelegate
 
@@ -269,16 +389,15 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
 {
 #pragma mark - 这里把detail View 的数据处理
     
-    [self hideDetailView];
-
     if (!shopCartModel) {
         return;
     }
     
     //判断 是否存在这个数据
     __block  BOOL isContain = NO;
-
-    [self.productOrderArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+#pragma mark - 使用赋值操作是为了 Setter 方法的执行
+    NSMutableArray *array = self.productOrderArray;
+    [array enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         
             ProductShopCartModel *model = obj;
 
@@ -291,56 +410,65 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
             }
         }];
     if (!isContain) {
-        [self.productOrderArray addObject:shopCartModel];
+        [array addObject:shopCartModel];
     }
     
+    self.productOrderArray = array;
     [self.orderTableView reloadData];
-    
-    }
+}
 
-#pragma mark - ProductOrderCartTableFootViewDelegate
-
-//xidan
-- (void)placeOrderClickWithRemarkStr:(NSString *)remarkStr
+- (void)productDetailViewRecordProductBtnClickProductID:(NSString *)productID isRecord:(BOOL)isRecord
 {
-    
     if (!APPCT.isLogin) {
-        
+       
+        [self.secondDetailView hideView];
         [APPCT showLoginViewCon];
         return;
     }
+    [APPCT.netWorkService GET:isRecord ? kAPIURLCancelRecordProduct : kAPIURLRecordProduct  parameters:@{@"pid":productID} success:^(NSDictionary *dictionary) {
+        
+        NSInteger requestStatus = [dictionary[status] integerValue];
+        if (requestStatus != 0) {
+            [SVProgressHUD showErrorWithStatus:dictionary[message]];
+            [SVProgressHUD dismissWithDelay:1.0];
+            return ;
+        }
+        [SVProgressHUD showSuccessWithStatus:dictionary[message]];
+        [SVProgressHUD dismissWithDelay:1.0];
     
-    if (self.productOrderArray.count == 1) {
-        [self alertTitle:@"请先选择商品" message:nil complete:nil];
-        return;
-    }
-    
-#pragma mark - 根据购物车里的row 添加东西，暂时没想到如何 合并相同供应商，商品名 的数据
-    
-//    NSString *content =  [self placeOrderPushServiceContentWithRemark:remarkStr productAry:self.productOrderArray];
-    
-    //博旭
-    NSArray *cartAry = [self arrayElementApppend:self.productOrderArray.copy remark:remarkStr];
-    NSString *content = [self placeOrderPushServiceContentProductOrderModelAry:cartAry];
-
-//    NSLog(@"请求数据 = %@",content);
-    //下单
-    [self requestAddNewOrderWithContent:content];
+    } faile:^(NSString *errorDescription) {
+        [SVProgressHUD showErrorWithStatus:errorDescription];
+        [SVProgressHUD dismissWithDelay:1.0];
+    }];
 }
 
 
 #pragma mark - Private method
 
+/** 设置导航条 */
+- (void)setNavigatonBar
+{
+    self.navigationItem.titleView = self.searchBar;
+    if (!kIsIphone) {
+        UIBarButtonItem *rightItem = [[UIBarButtonItem alloc] initWithTitle:@"取消" style:UIBarButtonItemStylePlain target:self action:@selector(rightItemButtonCancelClick)];
+        self.navigationItem.rightBarButtonItem = rightItem;
+    }
+}
+
+/** 布局 */
 - (void)layoutWithAuto
 {
+
     [self.categoryTableView mas_makeConstraints:^(MASConstraintMaker *make) {
         if (@available(iOS 11.0, *)) {
             make.bottom.equalTo(self.view.mas_safeAreaLayoutGuideBottom);
+            make.top.equalTo(self.view.mas_safeAreaLayoutGuideTop);
         } else {
             make.bottom.equalTo(self.view);
+            make.top.equalTo(self.view);
         }
-        make.top.left.equalTo(self.view);
-        make.width.mas_equalTo(120);
+        make.left.equalTo(self.view);
+        make.width.mas_equalTo(kIsIphone ? 80 : 120);
     }];
     [self.classTableView mas_makeConstraints:^(MASConstraintMaker *make) {
 
@@ -350,66 +478,93 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
             make.bottom.equalTo(self.view);
         }
         make.top.equalTo(self.view);
-        make.left.equalTo(self.categoryTableView.mas_right);
+        make.left.equalTo(self.categoryTableView.mas_right).mas_offset(0.8);
         make.width.equalTo(self.categoryTableView);
     }];
-   
-    [self.orderCartFootView mas_makeConstraints:^(MASConstraintMaker *make) {
-        if (@available(iOS 11.0, *)) {
-            make.bottom.equalTo(self.view.mas_safeAreaLayoutGuideBottom);
-        } else {
-            make.bottom.equalTo(self.view.mas_bottom);
-        }
-        make.right.equalTo(self.view);
-        make.width.mas_equalTo(120*4);
-        make.height.mas_equalTo(150);
-    }];
+    
+    if (kIsIphone) {
+        
+        [self.collectionView mas_makeConstraints:^(MASConstraintMaker *make) {
+            
+            if (@available(iOS 11.0, *)) {
+                make.bottom.equalTo(self.view.mas_safeAreaLayoutGuideBottom);
+            } else {
+                make.bottom.equalTo(self.view);
+            }
+            make.left.equalTo(self.classTableView.mas_right).mas_offset(0.5);
+            make.top.equalTo(self.view);
+            make.width.mas_equalTo((kScreenWidth-100)*2/5);
+        }];
+        
+    } else {
+        
+        [self.collectionView mas_makeConstraints:^(MASConstraintMaker *make) {
+            if (@available(iOS 11.0, *)) {
+                make.bottom.equalTo(self.view.mas_safeAreaLayoutGuideBottom);
+            } else {
+                make.bottom.equalTo(self.view);
+            }
+            make.left.equalTo(self.classTableView.mas_right).mas_offset(0.5);
+            make.top.equalTo(self.view);
+            make.width.mas_equalTo((kScreenWidth-100)*2/5);
+        }];
+    }
     
     [self.orderTableView mas_makeConstraints:^(MASConstraintMaker *make) {
-       
-        make.top.right.equalTo(self.view);
-        make.width.equalTo(self.orderCartFootView);
-        make.bottom.equalTo(self.orderCartFootView.mas_top);
-    }];
-    
-    
-    [self.collectionView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.equalTo(self.view);
+        make.left.equalTo(self.collectionView.mas_right).mas_offset(0.5);
         
         if (@available(iOS 11.0, *)) {
             make.bottom.equalTo(self.view.mas_safeAreaLayoutGuideBottom);
+            make.top.equalTo(self.view.mas_safeAreaLayoutGuideTop);
         } else {
             make.bottom.equalTo(self.view);
+            make.top.equalTo(self.view);
         }
-        make.left.equalTo(self.classTableView.mas_right);
-        make.top.equalTo(self.view);
-        make.right.equalTo(self.orderTableView.mas_left);
     }];
 }
+
+/** 设置cell 的基本设置 */
+- (void)setupTableCell:(UITableViewCell *)cell
+{
+    cell.textLabel.numberOfLines = 2;
+    cell.textLabel.font = [UIFont systemFontOfSize:kCellFont];
+    cell.selectedBackgroundView = [self cellSelectViewWithSize:cell.bounds.size];
+}
+/** 显示第二个 商品详情 */
+- (void)showProductSecondDetailView:(ProductDetailModel *)model
+{
+    self.secondDetailView.productDetailModel = model;
+    [self.secondDetailView showView];
+}
+
 
 /**
  请求商品分类 with  pid (父级分类id)
 
  @param pid 父级分类id
  */
-- (void)requestProductCategoryWithPid:(NSInteger)pid
+- (void)requestProductCategoryWithPid:(NSString *)pid
 {
     NSDictionary *parmeters = [NSDictionary dictionary];
     if (pid) {
-        parmeters = @{@"pid":[NSString stringWithFormat:@"%ld",pid]};
+        parmeters = @{@"pid":pid};
     } else {
         parmeters = nil;
     }
     
     __weak typeof(self)WeakSelf = self;
-    [APPCT.netWorkService GET:kSDYNetWorkProductCategoryUrl parameters:parmeters success:^(NSDictionary *data, NSString *errorDescription) {
+    __strong typeof(WeakSelf)strongSelf = WeakSelf;
+    
+    [APPCT.netWorkService GET:kAPIURLProductCategory parameters:parmeters success:^(NSDictionary *dictionary) {
         
-        NSInteger requestStatus = [data[status] integerValue];
-        NSString *backMessage = data[message];
+        NSInteger requestStatus = [dictionary[status] integerValue];
         if (requestStatus != 0) {
-            [WeakSelf alertTitle:backMessage message:nil complete:nil];
+            [SVProgressHUD showErrorWithStatus:dictionary[message]];
+            [SVProgressHUD dismissWithDelay:1.0];
+            return ;
         }
-        
-        NSArray *dataAry = data[@"data"];
+        NSArray *dataAry = dictionary[@"data"];
         
         NSMutableArray *modelAry = [NSMutableArray array];
         [dataAry enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -418,14 +573,14 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
         }];
         APPCT.viewModel.productCategorysAry = modelAry;
         
-        [WeakSelf.categoryTableView reloadData];
-        [WeakSelf.classTableView reloadData];
+        [strongSelf.categoryTableView reloadData];
+        [strongSelf.classTableView reloadData];
         
         //默认选中第一行
-        [WeakSelf.categoryTableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] animated:YES scrollPosition:UITableViewScrollPositionNone];
-    
+        [strongSelf.categoryTableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] animated:YES scrollPosition:UITableViewScrollPositionNone];
     } faile:^(NSString *errorDescription) {
-        [WeakSelf alertTitle:errorDescription message:nil complete:nil];
+        [SVProgressHUD showErrorWithStatus:errorDescription];
+        [SVProgressHUD dismissWithDelay:1.0];
     }];
 }
 
@@ -453,27 +608,28 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
         [parameters setObject:line forKey:@"len"];
     }
     __weak typeof(self)WeakSelf = self;
-    [APPCT.netWorkService GET:kSDYNetWorkProductListUrl parameters:parameters success:^(NSDictionary *data, NSString *errorDescription) {
-        NSInteger requestStatus = [data[status] integerValue];
-        NSString *backMessage = data[message];
+    __strong typeof(WeakSelf)strongSelf = WeakSelf;
+    
+    [APPCT.netWorkService GET:kAPIURLProductList parameters:parameters success:^(NSDictionary *dictionary) {
+        NSInteger requestStatus = [dictionary[status] integerValue];
         if (requestStatus !=0 ) {
-            [self alertTitle:backMessage message:nil complete:nil];
+            [SVProgressHUD showErrorWithStatus:dictionary[message]];
+            [SVProgressHUD dismissWithDelay:1.0];
             return ;
         }
-        NSArray *array = data[@"data"];//@[ @{},@{}]
+        NSArray *array = dictionary[@"data"];//@[ @{},@{}]
         
         NSMutableArray *productModelsAry = [NSMutableArray array];
         [array enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            ProductModle *model = [ProductModle cz_objWithDict:obj];
+            ProductDetailProductModel *model = [ProductDetailProductModel cz_objWithDict:obj];
             [productModelsAry addObject:model];
         }];
-    
-        APPCT.viewModel.productsAry = productModelsAry;
-//        [WeakSelf.collectionView reloadData];
-        WeakSelf.collectionIsReloadData = YES;
         
+        APPCT.viewModel.productsAry = productModelsAry;
+        strongSelf.collectionIsReloadData = YES;
     } faile:^(NSString *errorDescription) {
-        [self alertTitle:errorDescription message:nil complete:nil];
+        [SVProgressHUD showErrorWithStatus:errorDescription];
+        [SVProgressHUD dismissWithDelay:1.0];
     }];
 }
 
@@ -489,41 +645,34 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
     }
     
     __weak typeof(self)WeakSelf = self;
+    __strong typeof(WeakSelf)strongSelf = WeakSelf;
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [APPCT.netWorkService GET:kSDYNetWorkProductDetailUrl parameters:@{@"id":productid} success:^(NSDictionary *data, NSString *errorDescription) {
-            
-            __strong typeof(WeakSelf)strongSelf = WeakSelf;
-            
-            NSInteger requestStatus = [data[status] integerValue];
-            NSString *backMessage = data[message];
-            
+        [APPCT.netWorkService GET:kAPIURLProductDetail parameters:@{@"id":productid} success:^(NSDictionary *dictionary) {
+            NSInteger requestStatus = [dictionary[status] integerValue];
             if (requestStatus != 0) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [strongSelf alertTitle:backMessage message:nil complete:nil];
-                });
+                [SVProgressHUD showErrorWithStatus:dictionary[message]];
+                [SVProgressHUD dismissWithDelay:1.0];
                 return ;
             }
             /*
              attributes @[]   product @{}  shops @{}  skus @{}
              */
-            NSDictionary *dic = data[@"data"];
-            APPCT.productDetailModel = [ProductDetailModel cz_objWithDict:dic];
+            NSDictionary *dic = dictionary[@"data"];
+            ProductDetailModel *productDetailModel = [ProductDetailModel cz_objWithDict:dic];
             dispatch_async(dispatch_get_main_queue(), ^{
-                [strongSelf showDetailView];
+                [strongSelf showProductSecondDetailView:productDetailModel];
             });
         } faile:^(NSString *errorDescription) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [WeakSelf alertTitle:errorDescription message:nil complete:nil];
-            });
+            [SVProgressHUD showErrorWithStatus:errorDescription];
+            [SVProgressHUD dismissWithDelay:1.0];
         }];
     });
 }
 
-//- (void)requestProductDetailWithProductID:(NSString *)productid
+/** 新订单 */
 - (void)requestAddNewOrderWithContent:(NSString *)content
 {
-    
     if (!content) {
         [self alertTitle:@"没有商品信息" message:nil complete:nil];
         return;
@@ -534,63 +683,27 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         
-        [APPCT.netWorkService POST:kSDYNetWorkAddNewOrderUrl parameters:@{@"content": content} success:^(NSDictionary *data, NSString *errorDescription) {
-            
-            NSInteger requestStatus = [data[status] integerValue];
-            NSString *backMessage = data[message];
-            
+        [APPCT.netWorkService POST:kAPIURLAddNewOrder parameters:@{@"content": content} success:^(NSDictionary *dictionary) {
+            NSInteger requestStatus = [dictionary[status] integerValue];
+
             if (requestStatus != 0) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [strongSelf alertTitle: backMessage message:nil complete:nil];
-                });
+                [SVProgressHUD showErrorWithStatus:dictionary[message]];
+                [SVProgressHUD dismissWithDelay:1.0];
             } else {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [strongSelf alertTitle:@"下单成功" message:nil complete:nil];
-                    
-                    [strongSelf.productOrderArray removeObjectsInRange:NSMakeRange(1, strongSelf.productOrderArray.count - 1)];
+                dispatch_async(dispatch_get_main_queue(), ^{                    
+                    [strongSelf.productOrderArray removeAllObjects];
                     [strongSelf.orderTableView reloadData];
+                    
+                    
+                    [SVProgressHUD showSuccessWithStatus:@"success"];
+                    [SVProgressHUD dismissWithDelay:1.0];
                 });
             }
         } fail:^(NSString *errorDescription) {
-        
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [strongSelf alertTitle:errorDescription message:nil complete:nil];
-            });
+            [SVProgressHUD showErrorWithStatus:errorDescription];
+            [SVProgressHUD dismissWithDelay:1.0];
         }];
     });
-    
-}
-
-
-/**
- 显示商品详情界面
- */
-- (void)showDetailView
-{
-    self.detailView.detailModel = APPCT.productDetailModel;
-    [[UIApplication sharedApplication].keyWindow addSubview:self.blackView];
-    [UIView animateWithDuration:0.6 delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
-        CGRect frame = self.detailView.frame;
-        frame.origin.y = kScreenHeight /3;
-        self.detailView.frame = frame;
-    } completion:^(BOOL finished) {
-        
-    }];
-}
-
-/**
- 隐藏商品详情
- */
-- (void)hideDetailView
-{
-    [UIView animateWithDuration:0.6 delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
-        CGRect frame = self.detailView.frame;
-        frame.origin.y = kScreenHeight;
-        self.detailView.frame = frame;
-    } completion:^(BOOL finished) {
-        [self.blackView removeFromSuperview];
-        [self.detailView  clearData];
-    }];
 }
 
 
@@ -706,10 +819,84 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
 }
 
 
+//
+///**
+// 返回合并后的数组 model为ProductOrderModel
+//
+// @param array 购物车model 数组ProductShopCartModel
+// @param remark 备注
+// @return 合并后的数组ProductOrderModel
+// */
+//- (NSArray *)arrayElementApppend:(NSMutableArray *)array remark:(NSString *)remark
+//{
+//    //不使用copy  防止原数组修改
+//    NSMutableArray *modelArray = [NSMutableArray arrayWithArray:array];
+//
+//    NSMutableArray *resultArray = [NSMutableArray array];
+//
+//    for (NSInteger i = 0; i < modelArray.count; i ++) {
+//
+//        ProductShopCartModel *shopCartModel = modelArray[i];
+//
+//
+//        ProductOrderModel *orderModel = [[ProductOrderModel alloc] init];
+//        orderModel.shopName = shopCartModel.shopName;
+//        orderModel.shopID = shopCartModel.shopModel.shop_id;
+//        orderModel.shopPhone = shopCartModel.shopModel.master_phone;
+//        orderModel.userID = APPCT.loginUser.user_id;
+//        orderModel.userName = APPCT.loginUser.user_name;
+//        orderModel.content = remark;
+//        orderModel.totalPrice = shopCartModel.toalPrice;
+//
+//
+//        ProductOrderDetailModel *orderDetailModel = [[ProductOrderDetailModel alloc] init];
+//        orderDetailModel.detail_id = @"";
+//        orderDetailModel.sku_id = shopCartModel.skusModel.sku_id;
+//        orderDetailModel.product_name = shopCartModel.skusModel.product_name;
+//        orderDetailModel.product_id = shopCartModel.skusModel.product_id;
+//        orderDetailModel.attributes = shopCartModel.attributes;
+//        orderDetailModel.mall_price = [NSString stringWithFormat:@"%.2f",shopCartModel.unitPrice];
+//        orderDetailModel.quantity = [NSString stringWithFormat:@"%d",shopCartModel.number];
+//        orderDetailModel.unit = shopCartModel.unit;
+//
+//        [orderModel.details addObject:orderDetailModel];
+//
+//
+//        for (NSInteger j = i+1 >= modelArray.count ? 0 : i+1; j < modelArray.count; j++) {
+//
+//            if (j >= modelArray.count || j == 0) {
+//                break;
+//            }
+//
+//              ProductShopCartModel *shopCartModel2 = modelArray[j];
+//
+//            if (shopCartModel.shopName == shopCartModel2.shopName) {
+//
+//                orderModel.totalPrice = [NSString stringWithFormat:@"%.2f",[shopCartModel.toalPrice floatValue] + [shopCartModel2.toalPrice floatValue]];
+//
+//                ProductOrderDetailModel *orderDetailModel2 = [[ProductOrderDetailModel alloc] init];
+//                orderDetailModel2.detail_id = @"";
+//                orderDetailModel2.sku_id = shopCartModel2.skusModel.sku_id;
+//                orderDetailModel2.product_name = shopCartModel2.skusModel.product_name;
+//                orderDetailModel2.product_id = shopCartModel2.skusModel.product_id;
+//                orderDetailModel2.attributes = shopCartModel2.attributes;
+//                orderDetailModel2.mall_price = [NSString stringWithFormat:@"%.2f",shopCartModel2.unitPrice];
+//                orderDetailModel2.quantity = [NSString stringWithFormat:@"%d",shopCartModel2.number];
+//                orderDetailModel2.unit = shopCartModel2.unit;
+//                [orderModel.details addObject:orderDetailModel2];
+//            }
+//        }
+//        [resultArray addObject:orderModel];
+//    }
+//
+//    return resultArray;
+//}
+
+#pragma mark - 合并数据出现问题 
 
 /**
  返回合并后的数组 model为ProductOrderModel
-
+ 
  @param array 购物车model 数组ProductShopCartModel
  @param remark 备注
  @return 合并后的数组ProductOrderModel
@@ -718,8 +905,7 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
 {
     //不使用copy  防止原数组修改
     NSMutableArray *modelArray = [NSMutableArray arrayWithArray:array];
-    [modelArray removeObjectAtIndex:0];
-    
+    //最终结果的数组
     NSMutableArray *resultArray = [NSMutableArray array];
     
     for (NSInteger i = 0; i < modelArray.count; i ++) {
@@ -735,7 +921,6 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
         orderModel.content = remark;
         orderModel.totalPrice = shopCartModel.toalPrice;
         
-        
         ProductOrderDetailModel *orderDetailModel = [[ProductOrderDetailModel alloc] init];
         orderDetailModel.detail_id = @"";
         orderDetailModel.sku_id = shopCartModel.skusModel.sku_id;
@@ -745,20 +930,21 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
         orderDetailModel.mall_price = [NSString stringWithFormat:@"%.2f",shopCartModel.unitPrice];
         orderDetailModel.quantity = [NSString stringWithFormat:@"%d",shopCartModel.number];
         orderDetailModel.unit = shopCartModel.unit;
-        
+    
+        //添加数据
         [orderModel.details addObject:orderDetailModel];
-        
-        
+
+        //数组中 元素后面的元素比较
         for (NSInteger j = i+1 >= modelArray.count ? 0 : i+1; j < modelArray.count; j++) {
-            
+
             if (j >= modelArray.count || j == 0) {
                 break;
             }
-            
+
               ProductShopCartModel *shopCartModel2 = modelArray[j];
-            
-            if (shopCartModel.shopName == shopCartModel2.shopName && shopCartModel.productName == shopCartModel2.productName) {
-                
+
+            if (shopCartModel.shopName == shopCartModel2.shopName) {
+
                 orderModel.totalPrice = [NSString stringWithFormat:@"%.2f",[shopCartModel.toalPrice floatValue] + [shopCartModel2.toalPrice floatValue]];
 
                 ProductOrderDetailModel *orderDetailModel2 = [[ProductOrderDetailModel alloc] init];
@@ -770,15 +956,56 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
                 orderDetailModel2.mall_price = [NSString stringWithFormat:@"%.2f",shopCartModel2.unitPrice];
                 orderDetailModel2.quantity = [NSString stringWithFormat:@"%d",shopCartModel2.number];
                 orderDetailModel2.unit = shopCartModel2.unit;
+                
                 [orderModel.details addObject:orderDetailModel2];
             }
         }
         [resultArray addObject:orderModel];
     }
     
+    /**  删除相同供应商 的商品少的商品 */
+    resultArray = (NSMutableArray *)[self arrayRemoveArray:(NSArray *)resultArray];
+
     return resultArray;
 }
 
+/** 删除元素 */
+- (NSArray *)arrayRemoveArray:(NSArray *)array
+{
+    NSMutableArray *array2 = [NSMutableArray arrayWithArray:array];
+    for (NSInteger i = 0; i < array.count; i++) {
+        
+        ProductOrderModel *orderModel = array[i];
+        
+        for (NSInteger j = i+1 >= array.count ? 0 : i+1; j < array.count; j++) {
+            
+            if (j >= array.count || j == 0) {
+                break;
+            }
+            ProductOrderModel *orderModel2 = array[j];
+            
+            if (orderModel.shopID == orderModel2.shopID) {
+                
+                if (orderModel.details.count > orderModel2.details.count) {
+                    [array2 removeObject:orderModel2];
+                } else {
+                    [array2 removeObject:orderModel];
+                }
+            }
+        }
+    }
+    return array2.copy;
+}
+
+/** 设置tableview section header label */
+- (UILabel *)setupTableSectionHeaderLabelText:(NSString *)title
+{
+    UILabel *titleLabel = [[UILabel alloc] init];
+    titleLabel.backgroundColor = kSDYBgViewColor;
+    titleLabel.font = [UIFont systemFontOfSize:kCellFont];
+    titleLabel.text = title;
+    return titleLabel;
+}
 
 #pragma mark - Getter and Setter
 
@@ -788,6 +1015,23 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
     [self.collectionView reloadData];
 }
 
+- (void)setProductOrderArray:(NSMutableArray *)productOrderArray
+{
+    _productOrderArray = productOrderArray;
+    
+    if (_productOrderArray.count >= 1) {
+        
+        __block float total  = 0;
+
+        [_productOrderArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            ProductShopCartModel *model = obj;
+            total += [model.toalPrice floatValue];
+        }];
+        
+        ProductOrderCartTableFootView *footer = [self.orderTableView footerViewForSection:0];
+        footer.orderTotalPrice = [NSString stringWithFormat:@"%.2f",total];
+    }
+}
 
 - (UITableView *)categoryTableView
 {
@@ -815,17 +1059,21 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
     if (!_collectionView) {
         
         UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
-        layout.minimumLineSpacing = 10;
-        layout.minimumInteritemSpacing = 10;
-//        layout.itemSize = CGSizeMake(170, 50);
-        layout.itemSize = CGSizeMake(170, 100);
+        layout.minimumLineSpacing = 0.5;
+        layout.minimumInteritemSpacing = 0.5;
+        
+        layout.itemSize = CGSizeMake(((kScreenWidth-100)*2/5 -2)/2, kIsIphone ? 60 : 80);
+
         _collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
         _collectionView.delegate = self;
         _collectionView.dataSource = self;
-        _collectionView.backgroundColor = [UIColor whiteColor];
-//        [_collectionView registerNib:[UINib nibWithNibName:@"ProductLibraryCollectionCell" bundle:nil] forCellWithReuseIdentifier:ProductCollectionCellIdentifier];
+        _collectionView.showsVerticalScrollIndicator = NO;
+        _collectionView.showsHorizontalScrollIndicator = NO;
         
-        [_collectionView registerNib:[UINib nibWithNibName:NSStringFromClass([ProductCollectionCell class]) bundle:nil] forCellWithReuseIdentifier:ProductCollectionCellIdentifier];
+        _collectionView.backgroundColor = kSDYBgViewColor;
+    //使用有图片的cell
+//        [_collectionView registerNib:[UINib nibWithNibName:NSStringFromClass([ProductCollectionCell class]) bundle:nil] forCellWithReuseIdentifier:ProductCollectionCellIdentifier];
+        [_collectionView registerNib:[UINib nibWithNibName:NSStringFromClass([SDYHistoryRecordCell class]) bundle:nil] forCellWithReuseIdentifier:ProductCollectionCellIdentifier];
     }
     return _collectionView;
 }
@@ -835,51 +1083,40 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
     if (!_orderTableView) {
         _orderTableView = [self tableViewDefault];
         _orderTableView.tag = tableViewTagCommodityLibraryProductOrder;
+        _orderTableView.showsVerticalScrollIndicator = YES;
+        
+        UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 100, 40)];
+        titleLabel.text = @"已选商品";
+        titleLabel.backgroundColor = kSDYBgViewColor;
+        _orderTableView.tableHeaderView = titleLabel;
+        
         [_orderTableView registerClass:[ProductLibraryOrderCell class] forCellReuseIdentifier:OrderTableViewCellIdentifier];
+        [_orderTableView registerClass:[ProductOrderCartTableFootView class] forHeaderFooterViewReuseIdentifier:OrderTableViewFooterIdentifier];
+        [_orderTableView registerClass:[SDYCommodityLibraryOrderHeader class] forHeaderFooterViewReuseIdentifier:OrderTableViewHeaderIdentifier];
+        
     }
     return _orderTableView;
 }
 
-- (ProductDetailView *)detailView
+- (SDYCommodityLibraryProductDetailView *)secondDetailView
 {
-    if (!_detailView) {
-        _detailView = [[ProductDetailView alloc] initWithFrame:CGRectMake(0, kScreenHeight, kScreenWidth, kScreenHeight*2/3)];
-        _detailView.delegate = self;
+    if (!_secondDetailView) {
+        _secondDetailView = [[SDYCommodityLibraryProductDetailView alloc] init];
+        _secondDetailView.delegete  = self;
     }
-    return _detailView;
+    return _secondDetailView;
 }
 
-- (UIButton *)blackView
+- (UISearchBar *)searchBar
 {
-    if (!_blackView) {
-        _blackView = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, kScreenHeight)];
-        _blackView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.5];
-        [_blackView addTarget:self action:@selector(hideDetailView) forControlEvents:UIControlEventTouchUpInside];
-        [_blackView addSubview:self.detailView];
+    if (!_searchBar) {
+        _searchBar = [[UISearchBar alloc] init];
+        _searchBar.delegate = self;
+        _searchBar.showsCancelButton = YES;
+        _searchBar.placeholder = @"搜索商品 搜索的结果显示在正下方列表";
+        _searchBar.tintColor = [UIColor blackColor];
     }
-    return _blackView;
-}
-
-- (ProductOrderCartTableFootView *)orderCartFootView
-{
-    if (!_orderCartFootView) {
-        _orderCartFootView = [[ProductOrderCartTableFootView alloc] init];
-        _orderCartFootView.delegate = self;
-    }
-    return _orderCartFootView;
-}
-
-
-
-- (NSMutableArray *)productOrderArray
-{
-    if (!_productOrderArray) {
-        _productOrderArray = [NSMutableArray array];
-        ProductShopCartModel *shopCartModel = [[ProductShopCartModel alloc] init];
-        shopCartModel.isSection = YES;
-        [_productOrderArray addObject:shopCartModel];
-    }
-    return _productOrderArray;
+    return _searchBar;
 }
 
 - (UITableView *)tableViewDefault
@@ -896,7 +1133,7 @@ static NSString *const OrderTableViewCellIdentifier = @"CommodityLibraryOrderTab
 {
     UIView *selectView = [[UIView alloc] init];
     selectView.frame = CGRectMake(0, 0, size.width,size.height);
-    selectView.backgroundColor = kUIColorFromRGB(0x06ce8a);
+    selectView.backgroundColor = kSDYColorGreen;
     return selectView;
 }
 

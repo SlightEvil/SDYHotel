@@ -29,13 +29,4 @@
 @property (nonatomic, copy) NSString *show_sales;
 
 
-
-////   产品详情里面
-////创建时间
-//@property (nonatomic) NSString *created_at;
-////单品id
-//@property (nonatomic) NSString *sku_id;
-////属性
-//@property (nonatomic) NSString *attributes;
-
 @end

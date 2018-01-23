@@ -7,8 +7,10 @@
 //
 
 #import "ViewModel.h"
-#import "ProductModle.h"
+
 #import "ProductCategoryModel.h"
+#import "ProductDetailModel.h"
+
 
 
 
@@ -23,7 +25,7 @@
     return _productCategorysAry;
 }
 
-- (NSMutableArray<ProductModle *> *)productsAry
+- (NSMutableArray<ProductDetailProductModel *> *)productsAry
 {
     if (!_productsAry) {
         _productsAry = [NSMutableArray array];

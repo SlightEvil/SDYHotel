@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-@class ProductModle;
+@class ProductDetailProductModel;
 
 @interface ProductCollectionCell : UICollectionViewCell
 
@@ -21,6 +21,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *stock;
 
 
-@property (nonatomic) ProductModle *productModel;
+@property (nonatomic) ProductDetailProductModel *productModel;
 
 @end

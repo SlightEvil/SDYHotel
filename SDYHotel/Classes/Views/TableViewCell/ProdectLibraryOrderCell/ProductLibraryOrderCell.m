@@ -13,11 +13,15 @@
 
 @interface ProductLibraryOrderCell ()
 
+/** 商品名 */
 @property (nonatomic) UILabel *productNameLabel;
+/** 价格 */
 @property (nonatomic) UILabel *shopNameLabel;
+/** 数量 */
 @property (nonatomic) UILabel *productNumberLabel;
+/** 小计 */
 @property (nonatomic) UILabel *productPricelLabel;
-
+/** 删除 */
 @property (nonatomic) UIButton *deleteBtn;
 
 @property (nonatomic, copy) void(^deleteClick)(void);
@@ -26,6 +30,10 @@
 @end
 
 @implementation ProductLibraryOrderCell
+{
+    CGFloat _width;
+    
+}
 
 - (void)awakeFromNib {
     [super awakeFromNib];
@@ -42,7 +50,6 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        
         [self.contentView addSubview:self.productNameLabel];
         [self.contentView addSubview:self.shopNameLabel];
         [self.contentView addSubview:self.productNumberLabel];
@@ -74,31 +81,31 @@
 
 - (void)layoutWithAuto
 {
-//    480310 - 300
-//    120*3
     [self.deleteBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerY.mas_equalTo(self.contentView.mas_centerY);
+        make.centerY.equalTo(self.contentView.mas_centerY);
+        make.right.equalTo(self.contentView).mas_offset(-10);
         make.width.height.mas_equalTo(30);
-        make.right.equalTo(self).mas_offset(-20);
     }];
-    [self.productPricelLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerY.equalTo(self.deleteBtn);
-        make.height.mas_equalTo(40);
-        make.right.equalTo(self.deleteBtn.mas_left).mas_offset(-10);
-        make.width.mas_equalTo(95);
-    }];
-    [self.productNumberLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerY.width.height.equalTo(self.productPricelLabel);
-        make.right.equalTo(self.productPricelLabel.mas_left).mas_offset(-10);
+    
+    [self.productNameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.bottom.equalTo(self.contentView);
+        make.left.equalTo(self.contentView).mas_offset(10);
     }];
     [self.shopNameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerY.width.height.equalTo(self.productNumberLabel);
-        make.right.equalTo(self.productNumberLabel.mas_left).mas_offset(-10);
+        make.top.width.height.equalTo(self.productNameLabel);
+        make.left.equalTo(self.productNameLabel.mas_right).mas_offset(10);
     }];
-    [self.productNameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerY.width.height.equalTo(self.shopNameLabel);
-        make.right.equalTo(self.shopNameLabel.mas_left).mas_offset(-10);
-//        make.left.equalTo(self.contentView).mas_offset(10);
+    [self.productNumberLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.width.height.equalTo(self.shopNameLabel);
+        make.left.equalTo(self.shopNameLabel.mas_right).mas_offset(10);
+    }];
+    [self.productPricelLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.width.height.equalTo(self.productNumberLabel);
+        make.left.equalTo(self.productNumberLabel.mas_right).mas_offset(10);
+        make.right.equalTo(self.deleteBtn.mas_left).mas_offset(-10);
+    }];
+    [self.productNameLabel mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.width.equalTo(self.productPricelLabel);
     }];
 }
 
@@ -108,32 +115,26 @@
 {
     _shopCartModel = shopCartModel;
     
-    if (_shopCartModel.isSection) {
-        self.productNameLabel.text = @"商品名称";
-        self.shopNameLabel.text = @"供货商";
-        self.productNumberLabel.text = @"常用量";
-        self.productPricelLabel.text = @"参考价";
-        self.deleteBtn.hidden = YES;
-        
-    } else {
-        self.productNameLabel.text = _shopCartModel.productName;
-        self.shopNameLabel.text = _shopCartModel.shopName;
-        
-        NSString *numberStr = [NSString stringWithFormat:@"%d",_shopCartModel.number];
-        NSString *unitStr = _shopCartModel.attributes;
-        
-        self.productNumberLabel.text = [NSString stringWithFormat:@"%@ * %@",unitStr,numberStr];
-        self.productPricelLabel.text = [NSString stringWithFormat:@"%.2f",_shopCartModel.unitPrice];//保留2位小数
-        self.deleteBtn.hidden = NO;
-    }
+//    NSString *numberStr = [NSString stringWithFormat:@"%d",_shopCartModel.number];
+//    NSString *unitStr = _shopCartModel.attributes;
+    self.productNameLabel.text = _shopCartModel.productName;
+//    self.shopNameLabel.text = _shopCartModel.shopName;
+//    self.productNumberLabel.text = [NSString stringWithFormat:@"%@ * %@",unitStr,numberStr];
+//    self.productPricelLabel.text = [NSString stringWithFormat:@"%.2f",_shopCartModel.unitPrice];//保留2位小数
+//
+    //[NSString stringWithFormat:@"%.2f",_shopCartModel.unitPrice];
+    
+    self.shopNameLabel.text = _shopCartModel.attributes;
+    self.productNumberLabel.text = [NSString stringWithFormat:@"%.2f*%d",_shopCartModel.unitPrice,_shopCartModel.number];
+    self.productPricelLabel.text = _shopCartModel.toalPrice;
+
 }
 
 
 - (UILabel *)productNameLabel
 {
     if (!_productNameLabel) {
-        _productNameLabel = [UILabel labelWithTextColor:nil font:16];
-        _productNameLabel.textAlignment = NSTextAlignmentCenter;
+        _productNameLabel = [self setupDefaultLabel];
     }
     return _productNameLabel;
 }
@@ -141,8 +142,7 @@
 - (UILabel *)shopNameLabel
 {
     if (!_shopNameLabel) {
-        _shopNameLabel = [UILabel labelWithTextColor:nil font:16];
-        _shopNameLabel.textAlignment = NSTextAlignmentCenter;
+        _shopNameLabel = [self setupDefaultLabel];
     }
     return _shopNameLabel;
 }
@@ -150,8 +150,7 @@
 - (UILabel *)productNumberLabel
 {
     if (!_productNumberLabel) {
-        _productNumberLabel = [UILabel labelWithTextColor:nil font:16];
-        _productNumberLabel.textAlignment = NSTextAlignmentCenter;
+        _productNumberLabel = [self setupDefaultLabel];
     }
     return _productNumberLabel;
 }
@@ -159,8 +158,7 @@
 - (UILabel *)productPricelLabel
 {
     if (!_productPricelLabel) {
-        _productPricelLabel = [UILabel labelWithTextColor:nil font:16];
-        _productPricelLabel.textAlignment = NSTextAlignmentCenter;
+        _productPricelLabel = [self setupDefaultLabel];
     }
     return _productPricelLabel;
 }
@@ -169,10 +167,21 @@
 {
     if (!_deleteBtn) {
         _deleteBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_deleteBtn setBackgroundImage:[UIImage imageNamed:@"icon_close"] forState:UIControlStateNormal];
+        [_deleteBtn setImage:[UIImage imageNamed:@"icon_close"] forState:UIControlStateNormal];
         [_deleteBtn addTarget:self action:@selector(deleteBtnClick) forControlEvents:UIControlEventTouchUpInside];
     }
     return _deleteBtn;
+}
+
+- (UILabel *)setupDefaultLabel
+{
+    UILabel *label = [[UILabel alloc] init];
+    label.font = [UIFont systemFontOfSize:kCellFont];
+    label.textAlignment = NSTextAlignmentCenter;
+    label.numberOfLines = 3;
+    label.minimumScaleFactor = 0.7;
+    label.adjustsFontSizeToFitWidth = YES;
+    return label;
 }
 
 @end
